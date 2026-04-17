@@ -614,7 +614,7 @@
 
   /* ---------- Timeline ---------- */
   .tl-wrap { padding: var(--sp-6) var(--sp-8) var(--sp-8); }
-  .tl-svg { width: 100%; height: 320px; display: block; overflow: visible; }
+  .tl-svg { width: 100%; height: 400px; display: block; overflow: visible; }
   .tl-svg .axis { stroke: var(--rule-strong); stroke-width: 1; }
   .tl-svg .tick { stroke: var(--rule); stroke-width: 1; }
   .tl-svg .year-label {
@@ -956,7 +956,7 @@
         <span class="comp-counter">2008 → 2026</span>
       </div>
       <div class="tl-wrap">
-        <svg class="tl-svg" id="tl" viewBox="0 0 1200 320" preserveAspectRatio="xMidYMid meet" aria-label="Timeline of APAC financial-services legislation"></svg>
+        <svg class="tl-svg" id="tl" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid meet" aria-label="Timeline of APAC financial-services legislation"></svg>
       </div>
     </div>
   </section>
@@ -3206,8 +3206,8 @@
   (function renderTimeline() {
     var svg = document.getElementById('tl');
     if (!svg) return;
-    var W = 1200, H = 320;
-    var padL = 40, padR = 40, padT = 40, padB = 60;
+    var W = 1200, H = 400;
+    var padL = 40, padR = 40, padT = 50, padB = 70;
     var innerW = W - padL - padR;
     var years = KEY_LAWS.map(function (k) { return k.year; });
     var minY = Math.min.apply(null, years);
@@ -3248,73 +3248,107 @@
       return '#475569';
     }
 
-    // Stack events by year (alternate above/below and within stack)
-    var byYear = {};
-    KEY_LAWS.forEach(function (k) {
-      byYear[k.year] = byYear[k.year] || [];
-      byYear[k.year].push(k);
+    // Collision-aware tier placement. Six tiers alternating above/below so
+    // adjacent-year labels never share a row.
+    var TIERS = [
+      { side: -1, offset: 50  },
+      { side:  1, offset: 50  },
+      { side: -1, offset: 95  },
+      { side:  1, offset: 95  },
+      { side: -1, offset: 140 },
+      { side:  1, offset: 140 }
+    ];
+    var GAP = 8;
+
+    var events = KEY_LAWS.slice().sort(function (a, b) {
+      return a.year - b.year;
     });
 
-    Object.keys(byYear).forEach(function (yr) {
-      var evs = byYear[yr];
-      evs.forEach(function (ev, i) {
-        var side = i % 2 === 0 ? -1 : 1; // alternate above / below
-        var stackLevel = Math.floor(i / 2);
-        var offset = 40 + stackLevel * 52;
-        var cx = xFor(ev.year);
-        var cy = midY + side * offset;
+    var placed = [];
 
-        // Connector line
-        svg.appendChild(el('line', {
-          x1: cx, y1: midY,
-          x2: cx, y2: cy,
-          class: 'event-line',
-          stroke: colorFor(ev.code)
-        }));
+    events.forEach(function (ev) {
+      var cx = xFor(ev.year);
+      var halfW = Math.max(ev.label.length * 5.8, 60) / 2;
 
-        // Dot
-        var dot = el('circle', {
-          cx: cx, cy: cy, r: 6,
-          class: 'event-dot',
-          fill: colorFor(ev.code),
-          stroke: '#FFFFFF', 'stroke-width': 2
+      var chosen = null;
+      for (var t = 0; t < TIERS.length; t++) {
+        var tier = TIERS[t];
+        var collision = placed.some(function (p) {
+          if (p.side !== tier.side || p.offset !== tier.offset) return false;
+          return Math.abs(p.cx - cx) < (p.halfW + halfW + GAP);
         });
-        svg.appendChild(dot);
-
-        // Label (positioned above or below dot)
-        var labelY = cy + (side < 0 ? -12 : 22);
-        var ctryY = cy + (side < 0 ? -26 : 36);
-
-        // Inline flag via foreignObject (16x11 small flag)
-        var fo = el('foreignObject', {
-          x: cx - 8, y: ctryY - (side < 0 ? 10 : 0),
-          width: 16, height: 11
+        if (!collision) { chosen = tier; break; }
+      }
+      if (!chosen) {
+        // Defensive fallback: pick tier with the most horizontal clearance.
+        var best = TIERS[0], bestDist = -Infinity;
+        TIERS.forEach(function (tier) {
+          var minDist = Infinity;
+          placed.forEach(function (p) {
+            if (p.side !== tier.side || p.offset !== tier.offset) return;
+            minDist = Math.min(minDist, Math.abs(p.cx - cx));
+          });
+          if (minDist > bestDist) { bestDist = minDist; best = tier; }
         });
-        var wrap = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
-        wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-        wrap.style.width = '16px';
-        wrap.style.height = '11px';
-        wrap.innerHTML = flagHTML(ev.code, 'sm');
-        fo.appendChild(wrap);
-        svg.appendChild(fo);
+        chosen = best;
+      }
 
-        // Country code positioned beside flag
-        var codeX = cx + 12;
-        svg.appendChild(el('text', {
-          x: codeX, y: ctryY + (side < 0 ? -2 : 8),
-          'text-anchor': 'start',
-          class: 'event-ctry'
-        }, ev.code));
-        svg.appendChild(el('text', {
-          x: cx, y: labelY,
-          'text-anchor': 'middle',
-          class: 'event-label'
-        }, ev.label));
+      var side = chosen.side;
+      var offset = chosen.offset;
+      var cy = midY + side * offset;
 
-        // Accessibility
-        var title = el('title', {}, ev.year + ' · ' + ev.code + ' · ' + ev.label);
-        dot.appendChild(title);
+      // Connector line
+      svg.appendChild(el('line', {
+        x1: cx, y1: midY,
+        x2: cx, y2: cy,
+        class: 'event-line',
+        stroke: colorFor(ev.code)
+      }));
+
+      // Dot
+      var dot = el('circle', {
+        cx: cx, cy: cy, r: 6,
+        class: 'event-dot',
+        fill: colorFor(ev.code),
+        stroke: '#FFFFFF', 'stroke-width': 2
       });
+      svg.appendChild(dot);
+
+      // Label (positioned above or below dot)
+      var labelY = cy + (side < 0 ? -12 : 22);
+      var ctryY = cy + (side < 0 ? -26 : 36);
+
+      // Inline flag via foreignObject (16x11 small flag)
+      var fo = el('foreignObject', {
+        x: cx - 8, y: ctryY - (side < 0 ? 10 : 0),
+        width: 16, height: 11
+      });
+      var wrap = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+      wrap.style.width = '16px';
+      wrap.style.height = '11px';
+      wrap.innerHTML = flagHTML(ev.code, 'sm');
+      fo.appendChild(wrap);
+      svg.appendChild(fo);
+
+      // Country code positioned beside flag
+      var codeX = cx + 12;
+      svg.appendChild(el('text', {
+        x: codeX, y: ctryY + (side < 0 ? -2 : 8),
+        'text-anchor': 'start',
+        class: 'event-ctry'
+      }, ev.code));
+      svg.appendChild(el('text', {
+        x: cx, y: labelY,
+        'text-anchor': 'middle',
+        class: 'event-label'
+      }, ev.label));
+
+      // Accessibility
+      var title = el('title', {}, ev.year + ' · ' + ev.code + ' · ' + ev.label);
+      dot.appendChild(title);
+
+      placed.push({ cx: cx, halfW: halfW, side: side, offset: offset });
     });
   })();
 
