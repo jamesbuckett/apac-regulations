@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>APAC FinTech Technology Architecture Design Constraints — Research Brief</title>
+<meta name="description" content="A senior solutions-architect brief covering regulatory, data-localization, workload-isolation, and cybersecurity constraints across 10 APAC jurisdictions." />
+<style>
+  :root {
+    --bg: #F7F7F5;
+    --surface: #FFFFFF;
+    --surface-sunk: #FBFBF9;
+    --ink: #0F172A;
+    --ink-soft: #1F2937;
+    --muted: #64748B;
+    --muted-2: #94A3B8;
+    --rule: #E5E7EB;
+    --rule-strong: #CBD5E1;
+    --accent: #B45309;          /* restrained amber / ochre */
+    --accent-soft: #FDF3E7;
+    --strict: #7C2D12;
+    --moderate: #B45309;
+    --light-sev: #CA8A04;
+    --none: #475569;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Roboto Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Geist", "Segoe UI", Roboto, sans-serif;
+
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-strong); transition: border-color 160ms ease, color 160ms ease; }
+  a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- Layout ---------- */
+  .shell { max-width: 1240px; margin: 0 auto; padding: 0 var(--sp-8); }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    padding: var(--sp-16) 0 var(--sp-12);
+    background:
+      radial-gradient(ellipse at 80% -20%, rgba(180, 83, 9, 0.05), transparent 50%),
+      var(--bg);
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: var(--sp-6);
+  }
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 18px; height: 1px; background: var(--accent);
+  }
+  h1.title {
+    font-family: var(--sans);
+    font-size: clamp(32px, 5.2vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin: 0 0 var(--sp-6);
+    color: var(--ink);
+    max-width: 22ch;
+  }
+  .lede {
+    font-size: clamp(16px, 1.6vw, 19px);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 var(--sp-8);
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-8);
+    border-top: 1px solid var(--rule);
+    padding-top: var(--sp-4);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .meta-row b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- TOC ---------- */
+  .toc {
+    border-bottom: 1px solid var(--rule);
+    padding: var(--sp-6) 0;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    backdrop-filter: saturate(120%);
+  }
+  .toc-inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--sp-8);
+    align-items: center;
+  }
+  .toc-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); }
+  .toc a {
+    font-size: 13px;
+    border-bottom: 0;
+    color: var(--ink-soft);
+    padding: 4px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--surface);
+    transition: all 160ms ease;
+    font-variant-numeric: tabular-nums;
+  }
+  .toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- Intro / methodology ---------- */
+  .intro {
+    padding: var(--sp-12) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-8);
+  }
+  @media (min-width: 840px) {
+    .intro-grid { grid-template-columns: 1.1fr 1fr; gap: var(--sp-16); }
+  }
+  .intro h2 {
+    font-size: 13px;
+    font-family: var(--mono);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin: 0 0 var(--sp-4);
+  }
+  .intro p { margin: 0 0 var(--sp-3); color: var(--ink-soft); }
+  .legend {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: var(--sp-6);
+  }
+  .legend dt { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); margin-top: var(--sp-4); }
+  .legend dt:first-child { margin-top: 0; }
+  .legend dd { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+  .legend dt .dot {
+    display: inline-block; width: 8px; height: 8px; margin-right: 8px; vertical-align: middle;
+  }
+  .dot.strict   { background: var(--strict); }
+  .dot.moderate { background: var(--moderate); }
+  .dot.light    { background: var(--light-sev); }
+  .dot.none     { background: var(--none); }
+
+  /* ---------- Country sections ---------- */
+  .country {
+    padding: var(--sp-16) 0 var(--sp-12);
+    border-bottom: 1px solid var(--rule);
+  }
+  .country-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--sp-6);
+    align-items: end;
+    padding-bottom: var(--sp-6);
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: var(--sp-8);
+  }
+  .country-index {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .country-name {
+    font-size: clamp(26px, 3.2vw, 38px);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin: 4px 0 0;
+    line-height: 1.05;
+  }
+  .country-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    border: 1px solid var(--rule-strong);
+    padding: 4px 10px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .dim {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-2);
+    padding: var(--sp-6) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (min-width: 880px) {
+    .dim { grid-template-columns: 220px 1fr; gap: var(--sp-8); }
+  }
+  .dim:last-of-type { border-bottom: 0; }
+  .dim-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+  .dim-label .num {
+    display: inline-block;
+    color: var(--accent);
+    margin-right: 8px;
+    font-weight: 600;
+  }
+  .dim-body { color: var(--ink-soft); }
+  .dim-body ul { margin: 0; padding-left: 18px; }
+  .dim-body li { margin-bottom: 6px; }
+  .dim-body li:last-child { margin-bottom: 0; }
+  .dim-body p { margin: 0 0 8px; }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--rule);
+    padding: 2px 6px;
+    margin-right: 4px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    background: var(--surface);
+  }
+  .tag.hot { color: var(--strict); border-color: #E7D2C7; background: #FBF2ED; }
+  .tag.flux { color: var(--accent); border-color: #E7D2C7; background: var(--accent-soft); }
+
+  /* ---------- Architectural Implications Callout ---------- */
+  .implications {
+    margin-top: var(--sp-8);
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: var(--sp-6) var(--sp-8);
+    position: relative;
+  }
+  .implications::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+  }
+  .implications h4 {
+    font-size: 12px;
+    font-family: var(--mono);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 0 0 var(--sp-4);
+    font-weight: 600;
+  }
+  .implications ol { margin: 0; padding-left: 20px; }
+  .implications li { margin-bottom: 8px; color: var(--ink-soft); }
+
+  /* ---------- Comparative Matrix ---------- */
+  #matrix { padding: var(--sp-16) 0; border-bottom: 1px solid var(--rule); }
+  #matrix h2 {
+    font-size: clamp(26px, 3vw, 34px);
+    letter-spacing: -0.015em;
+    margin: 0 0 var(--sp-3);
+    font-weight: 600;
+  }
+  #matrix > p.sub { color: var(--muted); margin: 0 0 var(--sp-8); max-width: 70ch; }
+  .matrix-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  table.matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.matrix th, table.matrix td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  table.matrix th:last-child, table.matrix td:last-child { border-right: 0; }
+  table.matrix thead th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface-sunk);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  table.matrix td.country-cell {
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  table.matrix td.country-cell span { color: var(--muted); font-weight: 400; font-family: var(--mono); font-size: 11px; margin-left: 8px; }
+  .sev {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .sev .bar { width: 28px; height: 3px; }
+  .sev.strict .bar   { background: var(--strict); }
+  .sev.moderate .bar { background: var(--moderate); }
+  .sev.light .bar    { background: var(--light-sev); }
+  .sev.none .bar     { background: var(--none); }
+  .sev.strict        { color: var(--strict); }
+  .sev.moderate      { color: var(--moderate); }
+  .sev.light         { color: var(--light-sev); }
+  .sev.none          { color: var(--none); }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: var(--sp-12) 0 var(--sp-16);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  footer .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-6);
+    justify-content: space-between;
+    border-top: 1px solid var(--rule);
+    padding-top: var(--sp-6);
+  }
+  footer p { margin: 0; }
+
+  /* ---------- Utility ---------- */
+  .hairline { height: 1px; background: var(--rule); margin: var(--sp-12) 0; }
+  .small { font-size: 12px; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  @media print {
+    .toc { position: static; }
+    .country { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== MASTHEAD ============== -->
+<header class="masthead">
+  <div class="shell">
+    <div class="eyebrow">Research Brief &middot; Solutions Architecture &middot; APAC</div>
+    <h1 class="title">Technology Architecture Design Constraints Across APAC Financial Services</h1>
+    <p class="lede">
+      A senior architect's reference on the regulatory, data-residency, workload-isolation and cyber-resilience mandates that shape the physical and logical design of financial systems across ten APAC jurisdictions. Written for architects who must translate regulator circulars into concrete deployment topology.
+    </p>
+    <div class="meta-row">
+      <span><b>Prepared</b> &nbsp; 17 Apr 2026</span>
+      <span><b>Scope</b> &nbsp; Banking, Payments, Securities</span>
+      <span><b>Jurisdictions</b> &nbsp; 10</span>
+      <span><b>Dimensions</b> &nbsp; 12 per country</span>
+      <span><b>Intended audience</b> &nbsp; Solutions &amp; Security Architects</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============== TOC ============== -->
+<nav class="toc" aria-label="Jump to country">
+  <div class="shell toc-inner">
+    <span class="toc-label">Jump to</span>
+    <ul>
+      <li><a href="#indonesia">01 · Indonesia</a></li>
+      <li><a href="#india">02 · India</a></li>
+      <li><a href="#taiwan">03 · Taiwan</a></li>
+      <li><a href="#japan">04 · Japan</a></li>
+      <li><a href="#china">05 · China</a></li>
+      <li><a href="#hongkong">06 · Hong Kong</a></li>
+      <li><a href="#singapore">07 · Singapore</a></li>
+      <li><a href="#malaysia">08 · Malaysia</a></li>
+      <li><a href="#australia">09 · Australia</a></li>
+      <li><a href="#thailand">10 · Thailand</a></li>
+      <li><a href="#matrix">↳ Comparative Matrix</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="shell">
+
+  <!-- ============== INTRO ============== -->
+  <section class="intro">
+    <div class="intro-grid">
+      <div>
+        <h2>Method &amp; Framing</h2>
+        <p>
+          Each jurisdiction is assessed against twelve architectural dimensions, from regulator identity through data residency, workload-isolation mandates, cryptographic standards, and the specific legislative instruments that bind technology design. Citations reference the circular, notification, or master direction that materially constrains architecture — not the headline statute alone.
+        </p>
+        <p>
+          Distinctions are drawn between <b>binding rules</b> (statute / circular), <b>supervisory expectation</b> (letter, guidance, or examination practice), and <b>industry practice</b> (de facto standards). Areas of active regulatory flux are marked <span class="tag flux">Flux</span>.
+        </p>
+        <p>
+          Each country section closes with an <em>Architectural Implications</em> callout — five design constraints a practitioner would apply today. The document ends with a comparative matrix across the four localization / isolation dimensions that most materially determine deployment topology.
+        </p>
+      </div>
+      <aside class="legend" aria-label="Severity legend">
+        <dl>
+          <dt><span class="dot strict"></span>Strict</dt>
+          <dd>Hard localization, dedicated infrastructure, or onshore-only processing mandated by statute or binding circular.</dd>
+          <dt><span class="dot moderate"></span>Moderate</dt>
+          <dd>Approval, mirroring, or supervisory-access requirement; cross-border permitted under conditions.</dd>
+          <dt><span class="dot light"></span>Light</dt>
+          <dd>Principles-based expectations; regulator notification or best-effort onshore preference.</dd>
+          <dt><span class="dot none"></span>None</dt>
+          <dd>No explicit mandate. Industry practice or commercial considerations apply.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 01 · INDONESIA                                                 -->
+  <!-- ============================================================= -->
+  <section class="country" id="indonesia">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 01 / 10</div>
+        <h2 class="country-name">Indonesia</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">ID · IDR · UTC+7</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Otoritas Jasa Keuangan (OJK)</b> — prudential &amp; conduct regulator for banking, insurance, capital markets. <a href="https://www.ojk.go.id" rel="noopener">ojk.go.id</a></li>
+          <li><b>Bank Indonesia (BI)</b> — monetary authority and payment-system regulator. <a href="https://www.bi.go.id" rel="noopener">bi.go.id</a></li>
+          <li><b>Kominfo / Kemenkominfo</b> — electronic systems &amp; data-protection oversight. <a href="https://www.kominfo.go.id" rel="noopener">kominfo.go.id</a></li>
+          <li><b>BSSN</b> — National Cyber &amp; Crypto Agency. Technology risk is supervised jointly by OJK (TRM) and BSSN (cyber).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>BI Regulation 19/14/PBI/2017</b> — payment transaction data must be <b>processed and stored within Indonesia</b>. A hard onshore mandate for payment-system operators.</li>
+          <li><b>GR 71/2019</b> (Electronic System &amp; Transaction) relaxed general mandate, distinguishing <em>public-scope</em> (government) from <em>private-scope</em> ESOs; financial services retain tighter sectoral rules.</li>
+          <li><b>OJK POJK 11/POJK.03/2022</b> allows offshore data processing with OJK notification/approval, subject to supervisory access.</li>
+          <li>Customer / transaction data for banks may be mirrored offshore with onshore primary copy and regulator access.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>Domestic payment routing via <b>GPN (Gerbang Pembayaran Nasional)</b> — switching, clearing &amp; settlement for domestic card/QRIS transactions must occur onshore.</li>
+          <li>Core payment authorization and fraud screening on domestic rails must execute onshore.</li>
+          <li>Disaster-recovery site preference: onshore secondary; regional DR permitted for non-payment workloads with OJK consent.</li>
+          <li>Admin / DevOps may be performed cross-border subject to access controls and parent-level agreements approved by OJK.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign banks typically operate through a locally-incorporated subsidiary (PT) or a licensed branch (KCBA); fintech / payment institutions must be Indonesian legal entities under BI licensing.</li>
+          <li>Intra-group outsourcing permitted under OJK POJK 9/POJK.03/2016 on outsourcing, with documented oversight and local board accountability.</li>
+          <li>Local director accountability for IT risk is supervisory practice; signatory designation required for material systems.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li>Multi-tenant public cloud generally permitted; logical tenancy isolation acceptable for customer PII when supported by controls.</li>
+          <li>Payment system switching &amp; key management for domestic rails expected in dedicated / single-tenant environments with onshore HSM.</li>
+          <li>Production / non-production segregation and privileged-access controls explicit in OJK TRM expectations.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>PDP Law 27/2022</b> — requires adequate protection abroad <em>or</em> binding contractual safeguards <em>or</em> data-subject consent for outbound transfer.</li>
+          <li>Payment transaction data cross-border transfer restricted by BI rules; OJK data requires prior notification and ongoing supervisory access.</li>
+          <li>Sector carve-outs: insurance (OJK) and capital markets (OJK-PM) largely aligned with banking TRM.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>OJK POJK 11/POJK.03/2022</b> on IT risk management for commercial banks — aligned with ISO 27001 and NIST CSF principles.</li>
+          <li>Incident reporting: material cyber incidents to OJK typically <b>within 24 hours</b>; payment system disruption reporting to BI within 1 hour (significant).</li>
+          <li>Penetration testing annually; vulnerability scans quarterly; red-teaming for systemically important banks (SIB) is a supervisory expectation.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>SNAP (Standar Nasional Open API Pembayaran)</b> — BI 2021 standard; mandatory for payment-service providers with phased onboarding.</li>
+          <li>OAuth 2.0 / RESTful JSON with signed payloads; TLS-mutual authentication for participant-to-participant calls.</li>
+          <li>Open-banking data-sharing beyond payments remains voluntary / industry-led.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>Public cloud permitted; material cloud outsourcing requires OJK notification under POJK 11/2022 and exit-plan / data-portability documentation.</li>
+          <li>BI requires onshore processing for payment-system operators; CSPs must hold domestic data-center presence for those workloads.</li>
+          <li>Concentration risk addressed by requiring demonstrable alternative provider plans.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>AML/CFT obligations per Law 8/2010 and PPATK reporting; transaction monitoring with automated STR/CTR generation.</li>
+          <li><b>e-KYC</b> via OJK POJK 12/POJK.03/2018 (digital banking) using Dukcapil population database and biometric liveness.</li>
+          <li>National digital ID: <em>IKD</em> (Identitas Kependudukan Digital) — growing integration with financial onboarding.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum; TLS 1.3 preferred. BI payment rails prescribe specific cipher suites and key-rotation intervals.</li>
+          <li>Customer MFA mandatory for internet &amp; mobile banking transaction-level actions.</li>
+          <li>No mandated national cryptographic algorithm; SNI / international standards accepted. Onshore HSM required for payment-switching keys.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>UU ITE</b> (Electronic Information &amp; Transactions) — Law 11/2008, amended by Law 19/2016 and Law 1/2024</li>
+          <li><b>Government Regulation 71/2019</b> — Electronic Systems &amp; Transactions <span class="tag">binding</span></li>
+          <li><b>Personal Data Protection Law 27/2022 (PDP Law)</b> <span class="tag flux">Implementation phase-in</span></li>
+          <li><b>OJK POJK 11/POJK.03/2022</b> — IT risk management for commercial banks</li>
+          <li><b>BI PBI 23/6/PBI/2021</b> — Payment Service Providers; <b>PBI 19/14/PBI/2017</b> — Payment Transaction Data</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Deploy payment-system workloads into an onshore Indonesian region with dedicated VPC/VNet and onshore HSM; maintain primary &amp; DR inside Indonesia.</li>
+        <li>For non-payment workloads (CRM, analytics, collaboration), cross-border processing is allowable with OJK notification — design a clean data-classification boundary so only non-sensitive / non-payment data exits.</li>
+        <li>Integrate SNAP-compliant API gateway with mTLS and signed JWS payloads for participant-facing endpoints; keep key-material onshore.</li>
+        <li>Implement GPN/QRIS routing gateway inside Indonesia; foreign switching not permitted for domestic transactions.</li>
+        <li>Instrument 24-hour incident-notification pipeline to OJK and 1-hour payment-disruption channel to BI — both must survive CSP outage.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 02 · INDIA                                                    -->
+  <!-- ============================================================= -->
+  <section class="country" id="india">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 02 / 10</div>
+        <h2 class="country-name">India</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">IN · INR · UTC+5:30</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Reserve Bank of India (RBI)</b> — banks, payment systems, NBFCs. <a href="https://www.rbi.org.in" rel="noopener">rbi.org.in</a></li>
+          <li><b>SEBI</b> — securities &amp; capital markets. <a href="https://www.sebi.gov.in" rel="noopener">sebi.gov.in</a></li>
+          <li><b>IRDAI</b> — insurance. <a href="https://irdai.gov.in" rel="noopener">irdai.gov.in</a></li>
+          <li><b>CERT-In</b> — national CERT, incident directives &amp; log retention. <b>MeitY</b> — IT ministry (DPDP Act).</li>
+          <li><b>NPCI</b> — retail payment rails operator (UPI, IMPS, RuPay).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>RBI Circular DPSS.CO.OD.No. 2785/06.08.005/2017-18 (6 Apr 2018)</b> — <b>payment system data must be stored only in India</b>. Full strict localization for all PSOs, including foreign schemes.</li>
+          <li>KYC documents: onshore retention primary; mirroring offshore permitted subject to access and deletion guarantees.</li>
+          <li><b>DPDP Act 2023</b> introduces a government-notified negative list for cross-border transfer of personal data (draft rules Jan 2025).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>Payment authorization, clearing, settlement for domestic card/UPI/IMPS transactions must execute in India.</li>
+          <li>NPCI requires on-soil hosting and direct network connectivity into its data centres (Mumbai / Hyderabad / Chennai).</li>
+          <li>DR site must be within India, in a different seismic zone from primary (RBI guidance).</li>
+          <li>Administrative access from overseas must be governed, logged, and subject to CERT-In log-retention rules.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign banks operate as branches (with RBI-imposed capital and governance conditions) or wholly-owned subsidiaries (WOS).</li>
+          <li>Payment Aggregators / Payment Gateways must be Indian-incorporated and licensed by RBI (Master Direction on PA-PG, 2020 updated 2024).</li>
+          <li>Local CIO, CISO, and board-level IT strategy committee mandated by RBI Cybersecurity Framework.</li>
+          <li>Group platforms allowed subject to RBI outsourcing direction and effective local control.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>RBI Master Direction on IT Governance, Risk, Controls &amp; Assurance Practices, 2023</b> — requires segregation of production / non-production, privileged-access management, and workload classification.</li>
+          <li>Multi-tenant cloud permitted but dedicated environments expected for core banking solution (CBS) and HSM operations.</li>
+          <li>Zero-trust not explicit but strongly aligned with RBI Master Direction on Digital Payment Security Controls.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>DPDP Act 2023</b> — transfer permitted to any jurisdiction not on a negative list (to be notified). <span class="tag flux">Rules pending</span></li>
+          <li>RBI payment-data localization overrides DPDP flexibilities for payment data.</li>
+          <li>Sectoral: SEBI Cloud Services Framework (Mar 2023) and IRDAI outsourcing regulations each require data accessibility and audit rights.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>RBI Cyber Security Framework in Banks (2016)</b> + <b>Master Direction on Digital Payment Security Controls (2021)</b>.</li>
+          <li><b>CERT-In Directions (28 Apr 2022)</b> — incident reporting within <b>6 hours</b>, ICT log retention for 180 days onshore, mandatory NTP synchronization to NPL/NIC.</li>
+          <li>SEBI CSCRF (Aug 2024) — Cybersecurity &amp; Cyber Resilience Framework for regulated entities.</li>
+          <li>Annual red-teaming for SCB/PSB; VAPT twice-yearly; ISO 27001 widely adopted; PCI-DSS for card issuers.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Account Aggregator (AA) Framework</b> — RBI-regulated NBFC-AA model for consent-driven data sharing (ReBIT specs).</li>
+          <li><b>UPI</b> — NPCI-operated universal retail-payment API (ISO 20022-aligned). <b>UPI 2.0/AutoPay</b> extensions.</li>
+          <li><b>ONDC</b> (open commerce) uses Beckn protocol — non-banking but influences payment orchestration design.</li>
+          <li>API security: OAuth 2.0, signed JWS, mTLS to NPCI; FAPI-like profiles being adopted.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>RBI draft Framework for Adoption of Cloud Services (2024)</b> — establishes a common empanelment, exit, and concentration-risk regime. <span class="tag flux">Emerging</span></li>
+          <li>SEBI Cloud Framework prescribes CSP selection, data handling, and audit rights.</li>
+          <li>MeitY empanelment of CSPs historically for government workloads; banks select STQC/empanelled providers for sensitive workloads.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>PMLA obligations; FIU-IND reporting for STR/CTR.</li>
+          <li><b>Aadhaar e-KYC</b> and <b>Video KYC</b> (RBI KYC Master Direction, amended) permitted for low-to-medium risk onboarding.</li>
+          <li><b>DigiLocker, CKYCR</b> (Central KYC Registry) used for federated identity/KYC reuse.</li>
+          <li>Transaction-monitoring systems mandatory for all scheduled commercial banks.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum; TLS 1.3 encouraged; approved cipher suites per RBI Master Direction on Digital Payment Security Controls.</li>
+          <li>Two-factor authentication mandatory for domestic card-not-present transactions (historical hallmark of RBI policy).</li>
+          <li>India maintains its own controlled-cryptography environment; approved vendors via CCA (Controller of Certifying Authorities) for digital signatures.</li>
+          <li>HSMs typically FIPS 140-2 L3; keys held onshore for payment-system functions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Information Technology Act, 2000</b> (with SPDI Rules 2011)</li>
+          <li><b>Digital Personal Data Protection Act, 2023 (DPDP)</b> <span class="tag flux">Rules notified Jan 2025</span></li>
+          <li><b>RBI Master Direction on Digital Payment Security Controls, 2021</b></li>
+          <li><b>RBI Master Direction on IT Governance, 2023</b>; <b>CERT-In Directions, 2022</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>All payment-system data — at rest, in processing, in backup — resides in India; deploy CBS, payment switch, and HSM in an Indian region with in-country DR.</li>
+        <li>Design a strict data-classification and tokenisation layer so that overseas analytics or group platforms see only non-PSD, de-identified records.</li>
+        <li>Stand up a CERT-In-aligned logging platform with 180-day onshore retention and NTP sync to NPL/NIC; hook into a 6-hour incident reporting workflow.</li>
+        <li>Implement Account Aggregator consent-flow integration and RBI-compliant video-KYC; treat CKYCR as the canonical KYC identity store.</li>
+        <li>Treat cross-border data movement as a policy-controlled egress — assume it will be restricted for a notified subset under DPDP rules.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 03 · TAIWAN                                                   -->
+  <!-- ============================================================= -->
+  <section class="country" id="taiwan">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 03 / 10</div>
+        <h2 class="country-name">Taiwan</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">TW · TWD · UTC+8</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Financial Supervisory Commission (FSC)</b> — integrated financial regulator. <a href="https://www.fsc.gov.tw" rel="noopener">fsc.gov.tw</a></li>
+          <li><b>Central Bank of the Republic of China (CBC)</b> — monetary authority, payment-system oversight.</li>
+          <li><b>National Communications Commission (NCC)</b>, <b>Ministry of Digital Affairs (MODA)</b> — ICT &amp; cyber.</li>
+          <li><b>PIPC</b> — Personal Information Protection Commission (established 2024, phased operationalization). <span class="tag flux">Flux</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>No general data-localization statute. Supervisory expectation: <b>core banking and customer master data maintained onshore</b> with regulator-access guarantees.</li>
+          <li>FSC may restrict cross-border transfer of specific datasets by sectoral notification under PDPA Art. 21.</li>
+          <li>Credit information (JCIC) &amp; NCC Taiwan rails are strictly onshore.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>Core banking platform and accounting ledger must reside onshore with onshore DR (FSC practice).</li>
+          <li>Domestic payment clearing via Financial Information Service Co. (FISC) and TWD large-value RTGS (CBC) — on-soil only.</li>
+          <li>Offshore processing of non-core functions permitted following <b>FSC Regulations Governing Outsourcing by Financial Institutions</b> pre-approval.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign banks operate as branches or subsidiaries; subsidiary structure required for certain regulated activities (securities, insurance).</li>
+          <li>Group-platform sharing allowed with pre-approved outsourcing under FSC rules; local board-level IT governance required.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li>Multi-tenant public cloud allowed for non-core workloads; <b>critical workloads</b> (core banking, AML, card issuance) expected on dedicated / logically isolated environments.</li>
+          <li>Production/non-production segregation expected; privileged-access management audited in annual FSC examinations.</li>
+          <li>Taiwan CSP market dominated by domestic operators (Chunghwa Telecom, CHT HiNet) alongside hyperscale regions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li>PDPA Article 21 allows FSC / sector regulator to restrict cross-border transfer. Individual consent + purpose limitation otherwise.</li>
+          <li>Cross-strait (China) data transfer subject to additional national-security considerations.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>FSC Regulations Governing Standards for Information System &amp; Security Management of Electronic Banking</b> — prescribes controls, logging, and incident reporting.</li>
+          <li>FSC <b>Cybersecurity Action Plan 4.0</b> — red-team / threat-intel driven exercises for designated financial institutions.</li>
+          <li>ISO 27001 widely adopted; PCI-DSS for card issuers.</li>
+          <li>Material-incident reporting within prescribed hours (typically 2 hours for material service disruption).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>FSC Open Banking</b> — voluntary 3-phase framework operated by Financial Information Service Co.: (1) public information, (2) customer information with consent, (3) transaction information.</li>
+          <li>FAPI-aligned security; mTLS between TPP and ASPSP; OAuth 2.0 with consent grants.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>FSC approval required for <b>material cloud outsourcing</b> (Regulations Governing Outsourcing, amended Jul 2019; further clarifications 2022).</li>
+          <li>Bank must retain the right of on-site audit at CSP, or access to SOC 2 / ISAE 3402 reports plus local attestations.</li>
+          <li>Exit plans and reversibility demonstrably documented.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>AML/CFT under Money Laundering Control Act; MJIB (Investigation Bureau) as FIU.</li>
+          <li>eKYC via National Credit Card Center, TWID, and JCIC integration; FIDO-based liveness permitted.</li>
+          <li>Taiwan Digital ID (TWID) Federation — financial-sector integration for onboarding.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum; TLS 1.3 encouraged; RSA-2048 / ECDSA-P256 for signatures.</li>
+          <li>MFA mandatory for customer-facing transactional banking and privileged access.</li>
+          <li>PKI: GCA / TWCA national CAs; digital signatures under Electronic Signatures Act (amended 2024).</li>
+          <li>HSMs — FIPS 140-2 L3 common; onshore preferred.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Banking Act</b> Art. 45-1 (outsourcing), <b>PDPA</b> (1995, amended 2023)</li>
+          <li><b>Cyber Security Management Act, 2018</b></li>
+          <li><b>FSC Regulations Governing Outsourcing by Financial Institutions</b> (most recent amendments 2022)</li>
+          <li><b>Electronic Signatures Act</b> (amended 2024)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Keep core banking, ledger, and customer master onshore with Taiwan-based DR; retain auditable FSC access rights for any CSP-hosted component.</li>
+        <li>Obtain FSC pre-approval for material cloud outsourcing; deliver reversibility and exit design at point of approval, not after.</li>
+        <li>Integrate with FISC rails and JCIC directly from onshore private connectivity; avoid cross-region routing of domestic settlements.</li>
+        <li>Implement FAPI-grade Open Banking façade; align with FISC Open-Banking phase applicable to the institution's licence.</li>
+        <li>Plan for continued PIPC maturation: design consent-capture, purpose-limitation tagging, and cross-border restriction hooks now, rather than retrofitting.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 04 · JAPAN                                                    -->
+  <!-- ============================================================= -->
+  <section class="country" id="japan">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 04 / 10</div>
+        <h2 class="country-name">Japan</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">JP · JPY · UTC+9</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Financial Services Agency (FSA)</b> — integrated regulator. <a href="https://www.fsa.go.jp" rel="noopener">fsa.go.jp</a></li>
+          <li><b>Bank of Japan (BOJ)</b> — monetary authority, BOJ-NET operator.</li>
+          <li><b>Personal Information Protection Commission (PPC)</b> — APPI enforcement.</li>
+          <li><b>FISC</b> — industry body publishing the de facto security guidelines for financial institutions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>No statutory data-localization mandate.</li>
+          <li>Supervisory expectation: customer data should be accessible to FSA on request; where data is abroad, contractual audit-rights are required.</li>
+          <li>Resolution-planning &amp; records-retention obligations often drive de facto onshore copies.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>BOJ-NET, Zengin System (domestic RTGS / ACH) require on-soil connectivity and operation by Japanese-licensed operators.</li>
+          <li>Customer-onboarding, core ledger, and AML transaction-monitoring usually sit on-soil by convention and operational continuity preference.</li>
+          <li>DR site typically a second domestic region in a different seismic zone (FISC guidance).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign banks commonly branch; subsidiaries required for certain securities/insurance business.</li>
+          <li>Intra-group outsourcing permitted; FSA requires governance assurance with named local accountable officers (CIO / CISO).</li>
+          <li>Ring-fencing implicit through the FSA Comprehensive Supervisory Guidelines.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li>Multi-tenant public cloud broadly permitted; <b>FISC Security Guidelines</b> drive logical isolation, encryption-at-rest/in-transit, and key separation.</li>
+          <li>Privileged-access management, segregation of duties, production/non-production separation explicitly prescribed.</li>
+          <li>Zero-trust principles gaining traction via FSA cyber strategy.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>APPI</b> (amended 2022) — cross-border transfer requires (a) consent with information, (b) equivalent-standards country (adequacy), or (c) safeguards contract.</li>
+          <li>EU-Japan mutual adequacy recognition in place.</li>
+          <li>Sectoral: FSA may impose additional supervisory conditions in outsourcing approvals.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>FISC Security Guidelines for Financial Information Systems</b> (10th edition series) — de facto standard used at examination.</li>
+          <li><b>FSA Cybersecurity Policy / Practical Guidelines</b> (updated 2024) — threat-led testing expectation for G-SIBs / D-SIBs.</li>
+          <li>Incident reporting "without delay"; practical expectation &lt; 24 hours for material events.</li>
+          <li>ISO 27001, NIST CSF mapping common; PCI-DSS for card issuers.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li>Open-API framework under amended Banking Act (2017) — banks publish APIs under contractual agreements with Electronic Payment Service Providers.</li>
+          <li>JBA (Japanese Bankers Association) API standards; OAuth 2.0 with FAPI-alignment growing.</li>
+          <li>Not a single mandatory scheme — bilateral/contractual rather than a centralized CDR.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>Cloud permitted; FSA notification for material outsourcing with exit/reversibility plans.</li>
+          <li>CSP selection often aligned to ISMAP (Information system Security Management &amp; Assessment Program) — government-oriented but referenced by financials.</li>
+          <li>Concentration risk being highlighted in FSA supervisory communications.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>Act on Prevention of Transfer of Criminal Proceeds (APTCP) — AML obligations.</li>
+          <li>eKYC under APTCP (2018 amendment): permissible methods include selfie + ID photo, IC-chip reading (My Number Card).</li>
+          <li>My Number Card-based digital ID increasingly federated into financial onboarding.</li>
+          <li>JAFIC as FIU for STR.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum; TLS 1.3 increasingly required. CRYPTREC list informs approved algorithms.</li>
+          <li>MFA mandatory for customer high-risk transactions and privileged-access.</li>
+          <li>No mandated national cryptographic algorithm family; international standards accepted.</li>
+          <li>Onshore HSM preferred for core banking key material.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Banking Act</b> (Act No. 59 of 1981, amended)</li>
+          <li><b>Act on the Protection of Personal Information (APPI)</b> — amended 2022</li>
+          <li><b>FIEA</b> (Financial Instruments &amp; Exchange Act)</li>
+          <li><b>FISC Security Guidelines</b> — 10th edition series (2024 revisions)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Anchor core banking, BOJ-NET and Zengin connectivity in on-soil regions; align DR to a second Japanese region for seismic diversity.</li>
+        <li>Use CSPs and controls mapped to FISC Security Guidelines — treat FISC alignment as the lingua franca of FSA examination.</li>
+        <li>Leverage EU-Japan adequacy and contractual safeguards to enable group-platform analytics in EU/Japan axis; avoid mixing with non-adequate regions.</li>
+        <li>Integrate My Number / JPKI for eKYC and strong authentication; design the onboarding service with pluggable identity evidence.</li>
+        <li>Publish Open-API endpoints to FAPI-grade security; document EPSP partner onboarding as a formal change-management process.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 05 · CHINA                                                    -->
+  <!-- ============================================================= -->
+  <section class="country" id="china">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 05 / 10</div>
+        <h2 class="country-name">China (Mainland)</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">CN · CNY · UTC+8</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>National Financial Regulatory Administration (NFRA)</b> — prudential supervision (formed 2023, absorbing CBIRC). <a href="https://www.nfra.gov.cn" rel="noopener">nfra.gov.cn</a></li>
+          <li><b>People's Bank of China (PBOC)</b> — central bank &amp; payment-system regulator.</li>
+          <li><b>China Securities Regulatory Commission (CSRC)</b>.</li>
+          <li><b>Cyberspace Administration of China (CAC)</b> — cybersecurity &amp; data flows; <b>MPS</b> — public security / MLPS enforcement.</li>
+          <li><b>State Cryptography Administration (SCA / OSCCA)</b> — cryptography oversight.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Cybersecurity Law (CSL 2017)</b> — Critical Information Infrastructure Operators (CIIOs) must store personal information &amp; important data <b>within China</b>.</li>
+          <li><b>PIPL 2021</b> + <b>DSL 2021</b> reinforce onshore storage and add cross-border assessment regimes.</li>
+          <li>PBOC rules require <b>payment &amp; financial data generated in China</b> to be stored and processed onshore; bank-card transaction data via UnionPay rails remains onshore.</li>
+          <li>CIIP Regulation (2021) formalises CIIO designation and associated localization.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>Payment processing, clearing, settlement for domestic transactions must occur onshore — CNAPS (HVPS/BEPS), NUCC, UnionPay, NetsUnion.</li>
+          <li>DR site must be onshore; multi-active architectures widely used in a "two-location, three-centre" pattern.</li>
+          <li>Administration and DevOps access from outside China generally disallowed for CIIO workloads; onshore operations teams required.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign banks operate through branches or locally-incorporated subsidiaries; securities / fund management usually requires JV or WFOE with specific licences.</li>
+          <li>Group platforms abroad cannot be the primary system of record for Chinese customers' financial data; local system of record mandated.</li>
+          <li>Local CIO / CISO and a local IT governance board are supervisory norms.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Multi-Level Protection Scheme 2.0 (MLPS 2.0)</b> — systems graded 1–5; financial core systems typically <b>Level 3 or higher</b>, requiring dedicated or tightly-isolated environments.</li>
+          <li>Public cloud permitted for non-CIIO workloads from licensed domestic CSPs (Alibaba Cloud, Tencent Cloud, Huawei Cloud); hyperscalers operate through local partnerships (AWS × Sinnet/NWCD; Azure × 21Vianet).</li>
+          <li>Core banking, payment-switching, and key-management systems expected on dedicated / private cloud with onshore operations.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li>PIPL cross-border transfer route requires one of: <b>CAC security assessment</b>, <b>Standard Contract filing</b>, or <b>Certification</b>.</li>
+          <li>March 2024 CAC "Regulations on Promoting and Regulating Cross-Border Data Flows" relaxed thresholds but thresholds still apply to financial data.</li>
+          <li>"Important data" catalogues being finalised sector-by-sector. <span class="tag flux">Flux</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li>MLPS 2.0 (GB/T 22239-2019 series), CIIP Regulation, <b>JR/T 0071</b> financial-industry information-security standards.</li>
+          <li>Incident reporting to CAC and sector regulators under CSL (immediate / within hours for material events).</li>
+          <li>Regular attack-defence drills ("HW / 护网") organised by MPS / industry.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li>No unified mandatory open-banking scheme; bilateral API arrangements and PBOC-supervised standards dominate.</li>
+          <li>PBOC JR/T 0185 (Open API Application) and related financial-data-sharing standards set security expectations.</li>
+          <li>Super-app / QR payment rails (Alipay, WeChat Pay) act as quasi-open-access rails under PBOC supervision; NetsUnion routes such transactions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign CSPs operate only through licensed domestic partners; data sovereignty absolute for CIIOs.</li>
+          <li>Cloud outsourcing for banks subject to NFRA/PBOC outsourcing rules with explicit regulator notification / approval for material outsourcing.</li>
+          <li>"Distributed Application Architecture for Financial Industry" (JR/T 0201) drives banks' modernisation towards cloud-native patterns.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>AML under Anti-Money-Laundering Law (2007, amended 2024); PBOC's CAMLMAC reporting.</li>
+          <li>eKYC relies on government ID-card verification via the Ministry of Public Security's citizen ID service; facial recognition common.</li>
+          <li>e-CNY — PBOC digital currency — integration increasingly expected for retail payment apps.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Commercial Cryptography Law (2020)</b> — mandates state-approved <b>SM2 / SM3 / SM4 / SM9</b> algorithms for cryptographic protection of important data.</li>
+          <li>SCA-certified cryptographic modules (commercial cryptography certification) required for systems handling covered data.</li>
+          <li>HSMs must be SCA-approved; keys generated and held onshore.</li>
+          <li>MFA for customer and privileged access; payment messaging typically signed with SM2/SM3.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Cybersecurity Law (CSL), 2017</b> · <b>Data Security Law (DSL), 2021</b> · <b>Personal Information Protection Law (PIPL), 2021</b></li>
+          <li><b>Critical Information Infrastructure Security Protection Regulations, 2021</b></li>
+          <li><b>Commercial Cryptography Law, 2020</b> · <b>Counter-Espionage Law</b> (amended 2023)</li>
+          <li><b>CAC Cross-Border Data Flow Regulations, 2024</b> <span class="tag flux">Relaxed thresholds</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Stand up a fully onshore stack: licensed domestic CSP or JV hyperscaler, SM-family cryptography, SCA-certified HSMs, onshore operations and SRE teams — assume no foreign administrative access.</li>
+        <li>Design for MLPS Level-3+ controls from day one — rated-system graded testing, dedicated security-operations capability, and approval from MPS for system go-live.</li>
+        <li>Treat cross-border data movement as a compliance project: map "important data" exposure, budget for CAC security-assessment lead times, and minimise data egress through tokenisation / aggregation.</li>
+        <li>Integrate with CNAPS, NUCC, NetsUnion, and UnionPay via approved domestic connectivity; include e-CNY support in the roadmap for retail-facing applications.</li>
+        <li>Build a local legal entity with local CIO / CISO, local board governance, and a local system of record — group platforms abroad cannot be the book of record for Chinese data.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 06 · HONG KONG                                                -->
+  <!-- ============================================================= -->
+  <section class="country" id="hongkong">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 06 / 10</div>
+        <h2 class="country-name">Hong Kong SAR</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">HK · HKD · UTC+8</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Hong Kong Monetary Authority (HKMA)</b> — banking &amp; payment systems. <a href="https://www.hkma.gov.hk" rel="noopener">hkma.gov.hk</a></li>
+          <li><b>Securities and Futures Commission (SFC)</b> — securities, asset management, virtual assets.</li>
+          <li><b>Insurance Authority (IA)</b>.</li>
+          <li><b>Office of the Privacy Commissioner for Personal Data (PCPD)</b> — PDPO enforcement.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>No statutory data localization. HKMA requires records to be <b>"readily available" in Hong Kong</b> and accessible to the regulator on demand.</li>
+          <li>Section 33 of PDPO (cross-border transfer provision) remains not in force, but PCPD guidance encourages use of the recommended Model Clauses.</li>
+          <li>Mainland China data-protection regime may bite on HK entities handling CN customers' data.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>HKD RTGS (CHATS), FPS (Faster Payment System) operate onshore under HKMA/HKICL; participants require direct onshore connectivity.</li>
+          <li>Core banking records and customer data accessible onshore; offshore processing allowed under SA-2 outsourcing rules with HKMA non-objection.</li>
+          <li>DR typically intra-territory plus a regional secondary; HKMA expects documented site-resilience.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Locally-incorporated banks or branches both permitted; SFC-licensed corporations for securities business.</li>
+          <li>Group outsourcing permitted under HKMA <b>SA-2</b> supervisory policy manual (outsourcing) and <b>TM-E-1</b> (electronic banking).</li>
+          <li>HKMA "Manager-in-Charge" regime assigns named individuals accountability for technology and cyber.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li>Multi-tenant public cloud broadly accepted; HKMA Circular on cloud computing (<b>Aug 2022</b>) formalises cloud usage expectations and introduces the <b>Shared Assessments Programme</b> for CSP due-diligence reuse.</li>
+          <li>Logical isolation, encryption with customer-managed keys, and segregation of duties expected.</li>
+          <li>Zero-trust / network-segmentation aligned with HKMA Cyber Resilience Assessment Framework (C-RAF).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li>PDPO permits cross-border transfer with data-subject consent and appropriate safeguards; Section 33 not yet in force.</li>
+          <li>GBA cross-boundary data pilots (wealth-management connect, mBridge e-CNY experiments) create sector-specific data-sharing arrangements with mainland.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>HKMA CFI 2.0 (Cybersecurity Fortification Initiative 2.0)</b> — three pillars: <b>C-RAF</b> assessment, <b>iCAST</b> intelligence-led attack simulation, <b>CIR</b> professional development.</li>
+          <li>SFC Cybersecurity Guidelines for licensed corporations; IA cybersecurity code.</li>
+          <li>Incident reporting to HKMA "as soon as practicable" — practical &lt; 24 hours for material events; significant disruption reportable immediately.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>HKMA Open API Framework</b> — four-phase plan (Phase I product info → Phase IV transactional); <b>Phase IV</b> implementation ongoing.</li>
+          <li>API security: OAuth 2.0, mTLS, signed JWTs.</li>
+          <li><b>Commercial Data Interchange (CDI)</b> — consent-based sharing of corporate data across banks to accelerate SME credit.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>Material outsourcing requires HKMA non-objection under SA-2; explicit cloud risk-management expectations.</li>
+          <li>Concentration-risk assessment formalised; exit plans must be realistic and rehearsed.</li>
+          <li>CSPs with HK region presence (AWS HK, Azure HK, Alibaba HK) widely used; GCP via regional alternatives.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>AMLO — AML/CTF obligations; JFIU for STR.</li>
+          <li>eKYC via HKMA "remote onboarding" guidance (2019/2020) — biometrics + ID authentication; <b>iAM Smart</b> digital-identity platform for consented KYC.</li>
+          <li>Virtual-asset onboarding under SFC VATP licensing regime (Jun 2023).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum; TLS 1.3 preferred; approved cipher-suites per HKMA TM-E-1 / industry practice.</li>
+          <li>Strong customer authentication mandatory for high-risk transactions; 2FA long-standing norm.</li>
+          <li>No national crypto standard; FIPS-certified HSMs typical; onshore preferred for regulator access.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Banking Ordinance (Cap. 155)</b> · <b>Personal Data (Privacy) Ordinance (PDPO)</b></li>
+          <li><b>HKMA SPM TM-E-1</b> (Risk Management of E-Banking) · <b>SA-2</b> (Outsourcing)</li>
+          <li><b>HKMA Cybersecurity Fortification Initiative 2.0</b> (2020, refreshed 2023)</li>
+          <li><b>SFC Cybersecurity Guidelines</b> · <b>HKMA Cloud Computing Circular</b>, Aug 2022</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Use onshore HK regions for customer data, CHATS/FPS connectivity, and the primary system of record; regional DR permitted but demonstrate recovery and regulator access.</li>
+        <li>Design to C-RAF and iCAST from outset — threat modelling, red-team readiness, and SOC maturity should be part of the target-state architecture, not a compliance afterthought.</li>
+        <li>Expose Open-API Phase III/IV endpoints with FAPI-grade security and CDI integration for SME credit journeys.</li>
+        <li>Leverage iAM Smart for consented customer identity and remote onboarding; design journeys to fail open to branch/RVM where identity assurance insufficient.</li>
+        <li>For GBA cross-boundary flows, treat mainland customer data with PRC-grade controls (SM-family crypto, PIPL) — do not blend into HK-only data estate.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 07 · SINGAPORE                                                -->
+  <!-- ============================================================= -->
+  <section class="country" id="singapore">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 07 / 10</div>
+        <h2 class="country-name">Singapore</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">SG · SGD · UTC+8</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Monetary Authority of Singapore (MAS)</b> — integrated regulator and central bank. <a href="https://www.mas.gov.sg" rel="noopener">mas.gov.sg</a></li>
+          <li><b>Personal Data Protection Commission (PDPC)</b> — PDPA enforcement. <a href="https://www.pdpc.gov.sg" rel="noopener">pdpc.gov.sg</a></li>
+          <li><b>Cyber Security Agency (CSA)</b> — national cyber under Cybersecurity Act 2018. <a href="https://www.csa.gov.sg" rel="noopener">csa.gov.sg</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>No statutory data-localization mandate. MAS "permits" cross-border processing provided <b>timely regulator access to records in Singapore</b> is preserved (MAS Notice 658 and related outsourcing notices).</li>
+          <li>Data must be retrievable and FI must retain legal custody; CSP reps/warranties required.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>Domestic rails — MEPS+ (SGD RTGS), FAST, PayNow — onshore under MAS/ABS governance.</li>
+          <li>Processing may occur offshore subject to outsourcing controls and a demonstrable ability to recover to an onshore or equivalently-controlled site.</li>
+          <li>DR is principle-based: proportionate to criticality; offshore DR allowed if risk-managed.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Full banks, wholesale banks, DPT licensees — each with specific licensing. DPT under <b>Payment Services Act 2019</b>.</li>
+          <li>MAS permits group outsourcing with robust governance, local CIO / CISO, and a locally-accountable Board IT Committee for significant FIs.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li>Multi-tenant public cloud fully accepted; <b>MAS TRM 2021</b> articulates expected controls (IAM, segregation, encryption, logging).</li>
+          <li><b>MAS Cloud Advisory (Jun 2021)</b> — addresses concentration risk, exit strategy, business-continuity.</li>
+          <li>Zero-trust, defence-in-depth, API-gateway security are current supervisory expectations.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>PDPA 2012</b> (amended 2020) — transfer permitted with consent and comparable protection (e.g., contractual safeguards); ASEAN Model Contractual Clauses increasingly used.</li>
+          <li>Singapore is an <b>APEC CBPR / ASEAN DEFA</b> participant — supports interoperable data flows.</li>
+          <li>MAS-imposed conditions in outsourcing agreements govern sectoral cross-border data movement.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>MAS Technology Risk Management Guidelines (Jan 2021)</b> — the anchor document for FI technology / cyber practice.</li>
+          <li><b>MAS Notice 655 (Cyber Hygiene)</b> — binding baseline controls (patch, MFA, privilege, malware, secure config, security-update).</li>
+          <li>Incident reporting under Notice 644 — <b>within 1 hour</b> of detection of a relevant incident; root-cause report within 14 days.</li>
+          <li>AASE (Adversarial Attack Simulation Exercises) — threat-led red-team testing for systemically-important FIs.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>SGFinDex</b> — consent-based financial data exchange across participating banks, CPF, HDB, IRAS, insurers, via Singpass authentication.</li>
+          <li><b>MAS/ABS Finance-as-a-Service API Playbook</b> — security patterns (OAuth 2.0, FAPI, mTLS).</li>
+          <li>Open-banking is facilitated and standardised rather than compelled.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>CSP selection under MAS outsourcing notices; explicit <b>regulator access, audit, confidentiality, and exit</b> clauses required.</li>
+          <li>Concentration risk actively monitored; MAS examples require realistic exit/failover scenarios.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>AML/CFT under MAS Notice 626 (Banks) and equivalents for other FIs; STRO as FIU.</li>
+          <li><b>Singpass / Myinfo</b> — national digital identity &amp; government-verified attributes for eKYC.</li>
+          <li><b>Singpass Face Verification</b> for remote onboarding.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum; TLS 1.3 encouraged; MAS TRM prescribes strong cipher suites and PFS.</li>
+          <li>MFA universal for customer and privileged access; SMS-OTP increasingly disallowed in favour of app-based authentication.</li>
+          <li>HSMs — FIPS 140-2 L3+ common; key management with dual control and split knowledge.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Banking Act 1970</b> · <b>Payment Services Act 2019</b> · <b>Securities &amp; Futures Act</b></li>
+          <li><b>PDPA 2012</b> (amended 2020)</li>
+          <li><b>Cybersecurity Act 2018</b> (CII designation regime)</li>
+          <li><b>MAS TRM Guidelines, 2021</b> · MAS Notices 655 / 644 / 634 / 1121 · <b>MAS Cloud Advisory, 2021</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Architect freely across regions under MAS principle-based guidance — but <b>evidence timely regulator access</b> to records held in Singapore, with contractual and technical guarantees.</li>
+        <li>Bake MAS TRM 2021 and Notice 655 controls into CI/CD pipelines — hardening baselines, patch SLAs, MFA, privileged-access management.</li>
+        <li>Hit the 1-hour MAS Notice 644 incident-reporting SLA with runbooks, automation, and a rehearsed comms path — design detection-to-notification as an engineered pipeline.</li>
+        <li>Build on Singpass / Myinfo for onboarding and SGFinDex for data-sharing; FAPI-grade API security is the minimum bar.</li>
+        <li>Prove exit strategy: portability, data-extraction, and alternative-provider topologies must be tabletop-tested and documented.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 08 · MALAYSIA                                                 -->
+  <!-- ============================================================= -->
+  <section class="country" id="malaysia">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 08 / 10</div>
+        <h2 class="country-name">Malaysia</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">MY · MYR · UTC+8</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Bank Negara Malaysia (BNM)</b> — banking, payment systems, Islamic finance. <a href="https://www.bnm.gov.my" rel="noopener">bnm.gov.my</a></li>
+          <li><b>Securities Commission Malaysia (SC)</b>.</li>
+          <li><b>Department of Personal Data Protection (JPDP)</b> — PDPA enforcement (under Communications Ministry).</li>
+          <li><b>NACSA / CyberSecurity Malaysia</b> — national cyber coordination.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>BNM Policy Document on Outsourcing (2019)</b> requires BNM concurrence for storage of <b>customer information outside Malaysia</b> for material outsourcing.</li>
+          <li>Historical BNM expectation that primary copy of customer data resides onshore; offshore only with concurrence.</li>
+          <li><b>PDPA 2010</b> originally operated a whitelist of approved jurisdictions for transfer; <b>2024 amendments</b> moved to an "adequacy"-based model — implementation guidance pending. <span class="tag flux">Flux</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>Domestic payment rails — <b>RENTAS</b> (RTGS), <b>DuitNow</b> (retail instant) — operated onshore by PayNet under BNM oversight.</li>
+          <li>Core banking / customer data processing primarily onshore; offshore for material workloads requires BNM concurrence and evidence of access.</li>
+          <li>DR typically onshore for critical systems; regional DR permitted for non-critical.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign banks operate as locally-incorporated subsidiaries under FSA 2013 / IFSA 2013.</li>
+          <li>Local CIO / CISO required; Board Risk / Technology committees expected.</li>
+          <li>Group platforms permitted with BNM-approved outsourcing; data-access, audit, and sub-outsourcing controls apply.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>BNM RMiT (Risk Management in Technology, 2020)</b> — segregation of production/non-production, dedicated environments for critical systems, strong IAM &amp; privileged-access.</li>
+          <li>Multi-tenant public cloud accepted with concurrence; <b>dedicated / logical isolation</b> for critical systems such as core banking, payment switch.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li>PDPA 2010 Section 129 (post-2024 amendment): transfer permitted to jurisdictions with comparable protection or on consent / specified grounds.</li>
+          <li>BNM Outsourcing Policy: cross-border outsourcing requires concurrence and risk-assessment (including geopolitical, legal, concentration risk).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>BNM RMiT</b> — comprehensive technology-risk standard: cyber, cloud, outsourcing, data-leakage, resilience.</li>
+          <li><b>Incident reporting</b>: material cyber incidents reportable to BNM promptly; RMiT requires escalation protocols and root-cause timelines.</li>
+          <li><b>Cyber Security Bill 2024</b> introduces CII-sector requirements, licensing of service providers. <span class="tag flux">Recently enacted</span></li>
+          <li>Annual penetration testing; SOC capability; threat-led exercises for D-SIBs.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li>BNM "Open Data &amp; Application Programming Interfaces" policy (2018) — phased open APIs, initially for product information; PayNet API platform delivers DuitNow-based payment APIs.</li>
+          <li>Open-banking framework currently voluntary but converging on FAPI-grade security.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>BNM concurrence for <b>material cloud outsourcing</b>; assessment covers CSP resilience, data access, regulator audit-rights, exit.</li>
+          <li>Hyperscale regions (AWS MY, Azure MY, Google MY) recently launched / launching — expected to accelerate onshore cloud adoption. <span class="tag flux">Cloud regions 2024–2026</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>AML/CFT under AMLA 2001; BNM <b>AML/CFT and TFS for FIs (AML/CFT Policy)</b>; FIED as FIU.</li>
+          <li>eKYC under BNM <b>e-KYC Policy Document (2020)</b> — permits fully digital onboarding with liveness and document-verification requirements.</li>
+          <li>MyDigital ID — emerging national digital identity; integration expected.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum (TLS 1.3 moving); AES-256, RSA-2048 / ECDSA-P256 standard.</li>
+          <li>MFA mandatory for customer-facing transactional access; BNM policy on replacement of SMS OTP for high-risk operations.</li>
+          <li>HSMs FIPS 140-2 L3 typical; onshore preferred for key-ceremonies and card issuance.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Financial Services Act 2013 (FSA)</b> · <b>Islamic Financial Services Act 2013 (IFSA)</b></li>
+          <li><b>Personal Data Protection Act 2010</b> (amended 2024)</li>
+          <li><b>Cyber Security Act 2024</b></li>
+          <li><b>BNM RMiT, 2020</b> · <b>BNM Outsourcing Policy, 2019</b> · <b>BNM e-KYC Policy, 2020</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Default to onshore hosting of customer data and critical systems; treat cross-border processing as a BNM-approval exercise with documented risk-assessment and exit plan.</li>
+        <li>Build to BNM RMiT as the baseline controls catalogue; map architecture patterns directly to RMiT appendices for audit defensibility.</li>
+        <li>With new Malaysian hyperscale regions, revisit legacy offshore outsourcing decisions — onshore cloud is becoming the path-of-least-friction.</li>
+        <li>Integrate BNM-compliant e-KYC with liveness and document verification; engineer for MyDigital ID federation as it matures.</li>
+        <li>Stand up an incident-escalation pipeline aligned to RMiT reporting expectations; anticipate Cyber Security Act 2024 CII licensing implications for your CSP and service providers.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 09 · AUSTRALIA                                                -->
+  <!-- ============================================================= -->
+  <section class="country" id="australia">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 09 / 10</div>
+        <h2 class="country-name">Australia</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">AU · AUD · UTC+10</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Australian Prudential Regulation Authority (APRA)</b>. <a href="https://www.apra.gov.au" rel="noopener">apra.gov.au</a></li>
+          <li><b>Australian Securities &amp; Investments Commission (ASIC)</b> — conduct &amp; markets.</li>
+          <li><b>Reserve Bank of Australia (RBA)</b> — payment-system oversight (Payment Systems (Regulation) Act 1998).</li>
+          <li><b>AUSTRAC</b> — AML/CTF. <b>OAIC</b> — privacy. <b>ASD / ACSC</b> — national cyber.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>No statutory data-localization mandate. APRA expects records to be accessible and entities to retain effective control.</li>
+          <li><b>Privacy Act APP 8</b> — disclosing entity remains accountable for cross-border-transferred data; reasonable-steps obligation.</li>
+          <li><b>Security of Critical Infrastructure (SOCI) Act</b> amendments (2022) — obligations on critical-infrastructure sectors including banking.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>Domestic rails — RITS (RTGS), NPP (New Payments Platform), BECS — operated onshore by RBA / NPPA.</li>
+          <li>Offshore processing allowed under CPS 230 / CPS 231-style controls; APRA-notifiable service providers and documented resilience required.</li>
+          <li>DR generally onshore for critical systems; cross-region permissible with demonstrated recovery.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign ADIs operate as branches (FABs) or locally-incorporated subsidiaries; subsidiary required for retail deposit-taking.</li>
+          <li><b>CPS 220</b> risk management; <b>CPS 510</b> governance — board-level accountability for operational and technology risk.</li>
+          <li>Material service providers (intra-group or external) scoped under <b>CPS 230 Operational Risk Management (effective 1 Jul 2025)</b>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>CPS 234 (Information Security, 2019)</b> — controls proportionate to threat and criticality; segregation of environments expected.</li>
+          <li>Multi-tenant public cloud fully accepted under <b>APRA Information Paper on cloud computing (2018, refreshed)</b>.</li>
+          <li>Zero-trust, MFA, patching SLAs, and SOC capability are standard expectations.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li>APP 8 under Privacy Act 1988; disclosing entity remains accountable unless safe-harbour conditions met.</li>
+          <li>Privacy Act reform tranche-1 (2024) added statutory tort / children-code; tranche-2 expected to sharpen cross-border rules. <span class="tag flux">Flux</span></li>
+          <li>APRA outsourcing/OR rules govern banking-sector movements contractually.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>APRA CPS 234 (Information Security, 2019)</b> — legally binding prudential standard.</li>
+          <li><b>APRA CPS 230 (Operational Risk Management, effective 1 Jul 2025)</b> — supersedes CPS 231/232 for outsourcing/BCM; includes service-provider register &amp; tolerances.</li>
+          <li><b>SOCI Act / RMP rules</b> — Risk Management Program obligations for CI sectors; mandatory cyber-incident reporting (12h / 72h).</li>
+          <li>ACSC Essential Eight widely adopted; ISO 27001 / NIST CSF mappings common.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Consumer Data Right (CDR)</b> — legislated in 2019, operational across banking, energy, and expanding. FAPI 1.0 Advanced profile, mTLS, PAR.</li>
+          <li>Data Standards Body (DSB) publishes and maintains the CDR Standards; ACCC/OAIC administer accreditation and privacy.</li>
+          <li>Insurance, super, non-bank lending addressed in tranches; reform debate ongoing in 2025–26.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>APRA permits cloud; under CPS 230, material service providers must be registered, tolerances set, and providers regularly tested for exit/substitution.</li>
+          <li>Concentration risk and sovereign-cloud considerations increasingly raised in supervisory dialogue.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>AML/CTF under AML/CTF Act 2006; AUSTRAC regulations; transaction monitoring and TTR / SMR obligations.</li>
+          <li><b>Australian Government Digital ID</b> — expanded under the <b>Digital ID Act 2024</b>; myGovID / (rebranded "Digital ID") interoperable framework. <span class="tag flux">Phasing in</span></li>
+          <li>Document Verification Service (DVS) commonly used; VoI (Verification of Identity) standards.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum; TLS 1.3 strongly encouraged; ACSC-approved cryptographic algorithms (AACP) guide protection of classified data and inform financial baselines.</li>
+          <li>MFA mandatory for customer-facing high-risk and privileged access under CPS 234.</li>
+          <li>FIPS-certified HSMs; onshore preferred for customer-authentication keys and CDR cryptographic material.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Banking Act 1959</b> · <b>Privacy Act 1988</b> (tranche-1 reforms 2024)</li>
+          <li><b>Security of Critical Infrastructure Act 2018</b> (amended 2022)</li>
+          <li><b>APRA CPS 234 (2019)</b> · <b>CPS 230 (effective 1 Jul 2025)</b> · <b>CPG 234 / CPG 235</b></li>
+          <li><b>Consumer Data Right (CDR)</b> — Treasury Laws Amendment (CDR) Act 2019 · <b>Digital ID Act 2024</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Adopt CPS 230 tolerances as a first-class architectural input — per-service impact tolerances drive capacity, resilience, and dependency design, not just BCM plans.</li>
+        <li>Build to CPS 234 control objectives and map to APRA-expected evidence; use this mapping as the source of truth for SOC, testing, and assurance scopes.</li>
+        <li>Expose CDR endpoints at FAPI 1.0 Advanced; treat the DSB register integration and consent dashboard as product-grade features, not compliance artefacts.</li>
+        <li>Register material service providers; pre-plan SOCI-notifiable cyber-incident workflows (12-hour critical, 72-hour other) end-to-end.</li>
+        <li>Integrate the Digital ID Act 2024 federation as the strategic identity-evidence source; retain DVS / VoI fallback for edge cases.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- 10 · THAILAND                                                 -->
+  <!-- ============================================================= -->
+  <section class="country" id="thailand">
+    <header class="country-head">
+      <div>
+        <div class="country-index">Country 10 / 10</div>
+        <h2 class="country-name">Thailand</h2>
+      </div>
+      <div></div>
+      <div class="country-badge">TH · THB · UTC+7</div>
+    </header>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Bank of Thailand (BOT)</b> — banks, payment systems. <a href="https://www.bot.or.th" rel="noopener">bot.or.th</a></li>
+          <li><b>SEC Thailand</b>, <b>OIC</b> (insurance).</li>
+          <li><b>PDPC</b> — Personal Data Protection Committee under MDES.</li>
+          <li><b>NCSA (National Cyber Security Agency)</b> under the Cybersecurity Act 2019.</li>
+          <li><b>ETDA</b> — Electronic Transactions Development Agency; digital-ID and trust services.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>No general data-localization law; BOT can impose onshore conditions in licensing.</li>
+          <li><b>PDPA (2019, in force 2022)</b> restricts cross-border transfer absent adequacy / safeguards / consent.</li>
+          <li>BOT notification on IT Risk management expects regulator access to records in Thailand.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <div class="dim-body">
+        <ul>
+          <li>Domestic rails — <b>BAHTNET</b> (RTGS), <b>PromptPay</b> (instant retail), <b>ICAS</b> (cheque) — operated onshore.</li>
+          <li>Offshore processing allowed under BOT outsourcing rules with notification / approval and ongoing oversight.</li>
+          <li>DR typically onshore for critical systems; regional DR acceptable with demonstrated recovery.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <div class="dim-body">
+        <ul>
+          <li>Foreign banks commonly operate as branches / subsidiaries under <b>Financial Institutions Business Act 2008</b>.</li>
+          <li>Local IT / cyber governance assigned; board-level oversight expected.</li>
+          <li>Intra-group service arrangements permitted with BOT-compliant outsourcing governance.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <div class="dim-body">
+        <ul>
+          <li>Multi-tenant public cloud accepted under BOT IT risk rules; material workloads (core banking, payment switching) expected on isolated / dedicated environments.</li>
+          <li>BOT's IT &amp; cyber risk notification prescribes IAM, production/non-production segregation, and logging controls.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <div class="dim-body">
+        <ul>
+          <li>PDPA cross-border: permitted to jurisdictions with adequate protection (PDPC determines), or under binding corporate rules / standard contractual terms / consent.</li>
+          <li>BOT may impose specific conditions on outsourcing agreements involving cross-border data.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>BOT Notification on IT Risk Management</b> and the <b>Cyber Resilience Assessment Framework</b> for FIs.</li>
+          <li><b>Cybersecurity Act 2019</b> designates CII and empowers NCSA to demand incident reporting and preventive measures.</li>
+          <li>Incident reporting to BOT promptly; to PDPC under PDPA within 72 hours for personal-data breaches.</li>
+          <li>ISO 27001, NIST CSF and PCI-DSS widely adopted.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <div class="dim-body">
+        <ul>
+          <li>BOT is advancing an open-data / open-banking framework under the <b>Financial Landscape Consultation (2022 and subsequent directions)</b>.</li>
+          <li>API standards emerging; PromptPay and PromptBiz provide de-facto payment-API experiences.</li>
+          <li>ETDA digital-services standards inform API security baseline.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <div class="dim-body">
+        <ul>
+          <li>Cloud outsourcing under BOT IT Outsourcing Notification; material outsourcing requires notification / non-objection with demonstrable controls.</li>
+          <li>Local hyperscale regions (AWS BKK, Google TH, Azure TH) emerging, reducing friction for onshore cloud.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <div class="dim-body">
+        <ul>
+          <li>AML/CFT under AMLA 1999; AMLO as FIU.</li>
+          <li><b>NDID (National Digital ID)</b> — federated identity platform enabling eKYC across FIs; BOT &amp; ETDA-endorsed.</li>
+          <li>Biometric facial-recognition onboarding permitted under BOT eKYC guidance.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <div class="dim-body">
+        <ul>
+          <li>TLS 1.2 minimum; TLS 1.3 encouraged; standard cipher suites.</li>
+          <li>MFA required for customer-facing high-risk and privileged access.</li>
+          <li>ETDA PKI framework; HSMs typically FIPS 140-2 L3; onshore preferred for PromptPay / domestic card rails.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dim">
+      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <div class="dim-body">
+        <ul>
+          <li><b>Financial Institutions Business Act 2008</b></li>
+          <li><b>Personal Data Protection Act 2019</b> (enforcement 2022)</li>
+          <li><b>Cybersecurity Act 2019</b></li>
+          <li><b>BOT IT Risk Management Notification</b> &amp; <b>BOT IT Outsourcing Notification</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="implications">
+      <h4>Architectural Implications</h4>
+      <ol>
+        <li>Keep BAHTNET / PromptPay / ICAS connectivity and their supporting workloads onshore; use Thailand CSP regions as they mature to align customer-data primary copies.</li>
+        <li>Integrate NDID as the default eKYC and step-up identity evidence provider; design identity journeys to degrade gracefully where NDID is unavailable.</li>
+        <li>Build to BOT IT risk &amp; cyber-resilience expectations; mirror the Cyber Resilience Assessment Framework controls into the target-state operating model.</li>
+        <li>Engineer PDPA compliance (72-hour breach notification, consent management, cross-border safeguards) into identity, marketing, and analytics platforms.</li>
+        <li>Treat BOT outsourcing rules as gated-decision architecture — material cloud / offshore changes assume a BOT consultation cycle, not post-hoc notification.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- COMPARATIVE MATRIX                                             -->
+  <!-- ============================================================= -->
+  <section id="matrix">
+    <div class="eyebrow">Synthesis</div>
+    <h2>Comparative Matrix — Localization &amp; Isolation Severity</h2>
+    <p class="sub">Scoring across the four dimensions that most materially determine deployment topology: where data lives, where processing runs, whether a local legal entity is compelled, and how strictly workloads must be segregated. Severity reflects the <em>binding</em> floor, not aspiration.</p>
+
+    <div class="matrix-wrap">
+      <table class="matrix" aria-label="Comparative matrix of APAC localization and isolation severity">
+        <thead>
+          <tr>
+            <th scope="col">Jurisdiction</th>
+            <th scope="col">Data Localization</th>
+            <th scope="col">System / Process Localization</th>
+            <th scope="col">Legal Entity Segregation</th>
+            <th scope="col">Workload Isolation</th>
+            <th scope="col">Notable anchor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="country-cell">China <span>CN</span></td>
+            <td><span class="sev strict"><span class="bar"></span>Strict</span></td>
+            <td><span class="sev strict"><span class="bar"></span>Strict</span></td>
+            <td><span class="sev strict"><span class="bar"></span>Strict</span></td>
+            <td><span class="sev strict"><span class="bar"></span>Strict</span></td>
+            <td>CSL / DSL / PIPL · MLPS 2.0 · SM crypto</td>
+          </tr>
+          <tr>
+            <td class="country-cell">India <span>IN</span></td>
+            <td><span class="sev strict"><span class="bar"></span>Strict</span></td>
+            <td><span class="sev strict"><span class="bar"></span>Strict</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>RBI payment-data localization (2018)</td>
+          </tr>
+          <tr>
+            <td class="country-cell">Indonesia <span>ID</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev strict"><span class="bar"></span>Strict</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>BI PBI 19/14/PBI/2017 · OJK POJK 11/2022</td>
+          </tr>
+          <tr>
+            <td class="country-cell">Malaysia <span>MY</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>BNM RMiT · Outsourcing Policy</td>
+          </tr>
+          <tr>
+            <td class="country-cell">Taiwan <span>TW</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>FSC Outsourcing Regulations</td>
+          </tr>
+          <tr>
+            <td class="country-cell">Thailand <span>TH</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>BOT IT risk / outsourcing notifications</td>
+          </tr>
+          <tr>
+            <td class="country-cell">Hong Kong <span>HK</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>HKMA SA-2 / TM-E-1 · CFI 2.0</td>
+          </tr>
+          <tr>
+            <td class="country-cell">Singapore <span>SG</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>MAS TRM · Notices 655 / 644</td>
+          </tr>
+          <tr>
+            <td class="country-cell">Japan <span>JP</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>FISC Security Guidelines · APPI</td>
+          </tr>
+          <tr>
+            <td class="country-cell">Australia <span>AU</span></td>
+            <td><span class="sev none"><span class="bar"></span>None</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev light"><span class="bar"></span>Light</span></td>
+            <td><span class="sev moderate"><span class="bar"></span>Moderate</span></td>
+            <td>APRA CPS 234 / CPS 230 · CDR · SOCI</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="small" style="margin-top: 16px;">
+      Severity reflects the author's assessment of binding rules as of 17 April 2026 and is intended as a design-input heuristic, not a legal conclusion. All multi-tenant workload placement requires institution-level controls regardless of the matrix score; the "Workload Isolation" rating captures the <em>minimum</em> segregation expectation.
+    </p>
+  </section>
+
+  <footer>
+    <div class="row">
+      <p>© 2026 · APAC FinTech Architecture Research Brief · Prepared for internal solutions-architecture use.</p>
+      <p>Sources: regulator websites and circulars listed per-country. Verify currency of any rule before design commitment.</p>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // Smooth scroll with sticky-TOC offset compensation
+  document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+    anchor.addEventListener('click', function (e) {
+      var targetId = this.getAttribute('href');
+      if (targetId.length <= 1) return;
+      var target = document.querySelector(targetId);
+      if (!target) return;
+      e.preventDefault();
+      var toc = document.querySelector('.toc');
+      var offset = toc ? toc.offsetHeight + 12 : 0;
+      var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    });
+  });
+
+  // Subtle active-link styling as you scroll
+  var sections = document.querySelectorAll('.country, #matrix');
+  var links = document.querySelectorAll('.toc a');
+  var linkMap = {};
+  links.forEach(function (l) { linkMap[l.getAttribute('href').replace('#','')] = l; });
+
+  function setActive() {
+    var y = window.scrollY + 140;
+    var current = null;
+    sections.forEach(function (s) { if (s.offsetTop <= y) current = s.id; });
+    links.forEach(function (l) { l.style.borderColor = ''; l.style.color = ''; });
+    if (current && linkMap[current]) {
+      linkMap[current].style.borderColor = 'var(--accent)';
+      linkMap[current].style.color = 'var(--accent)';
+    }
+  }
+  window.addEventListener('scroll', setActive, { passive: true });
+  setActive();
+</script>
+</body>
+</html>
