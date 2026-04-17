@@ -382,6 +382,456 @@
   .hairline { height: 1px; background: var(--rule); margin: var(--sp-12) 0; }
   .small { font-size: 12px; color: var(--muted); }
 
+  /* ===== FLAGS ========================================================= */
+  .flag {
+    display: inline-block;
+    width: 22px;
+    height: 15px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    vertical-align: middle;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 1px;
+  }
+  .flag svg { display: block; width: 100%; height: 100%; }
+  .flag.sm { width: 16px; height: 11px; }
+  .flag.lg { width: 48px; height: 32px; border-width: 1px; box-shadow: 0 2px 4px rgba(15,23,42,0.08); }
+
+  /* Country head — flag + text layout */
+  .country-head > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .country-head > div:first-child .ch-text { display: flex; flex-direction: column; }
+
+  /* TOC flags */
+  .toc a .flag { margin-right: 6px; }
+
+  /* Matrix flags */
+  table.matrix td.country-cell .flag { margin-right: 8px; }
+
+  /* ===== VISUAL SYNTHESIS ============================================= */
+
+  /* Section shell reused by #atglance, #compare, #flow */
+  .vs {
+    padding: var(--sp-16) 0 var(--sp-12);
+    border-bottom: 1px solid var(--rule);
+  }
+  .vs h2 {
+    font-size: clamp(26px, 3vw, 34px);
+    letter-spacing: -0.015em;
+    margin: 0 0 var(--sp-3);
+    font-weight: 600;
+  }
+  .vs .sub { color: var(--muted); margin: 0 0 var(--sp-8); max-width: 72ch; }
+  .vs .eyebrow { margin-bottom: var(--sp-3); }
+
+  /* Card container */
+  .vcard {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  .vcard-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--sp-4) var(--sp-6);
+    background: var(--surface-sunk);
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+  }
+  .vcard-body { padding: var(--sp-6) var(--sp-8); }
+
+  /* ---------- Mini severity indicator on country headers ---------- */
+  .mini-sev {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .mini-sev-pips {
+    display: flex;
+    gap: 2px;
+  }
+  .mini-sev-pips .pip {
+    width: 26px; height: 6px;
+    display: block;
+    transition: transform 160ms ease;
+  }
+  .mini-sev-pips .pip[data-sev="3"] { background: var(--strict); }
+  .mini-sev-pips .pip[data-sev="2"] { background: var(--moderate); }
+  .mini-sev-pips .pip[data-sev="1"] { background: var(--light-sev); }
+  .mini-sev-pips .pip[data-sev="0"] { background: var(--rule-strong); }
+  .mini-sev-pips:hover .pip { transform: scaleY(1.4); }
+  .mini-sev-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---------- Heatmap ---------- */
+  .hm {
+    display: grid;
+    grid-template-columns: 170px repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+  }
+  .hm > * {
+    background: var(--surface);
+    padding: 12px 14px;
+    font-size: 12px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  .hm .corner, .hm .colh {
+    background: var(--surface-sunk);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .hm .rowh {
+    background: var(--surface-sunk);
+    font-weight: 600;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .hm .rowh small {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+  .hm .cell {
+    color: #FFFFFF;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: default;
+    position: relative;
+    transition: transform 180ms ease, box-shadow 180ms ease, z-index 0s 180ms;
+    justify-content: flex-start;
+  }
+  .hm .cell[data-sev="3"] { background: #7C2D12; }
+  .hm .cell[data-sev="2"] { background: #B45309; }
+  .hm .cell[data-sev="1"] { background: #CA8A04; color: #1a1a1a; }
+  .hm .cell[data-sev="0"] { background: #CBD5E1; color: #334155; }
+  .hm .cell:hover {
+    transform: scale(1.08);
+    z-index: 4;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.22);
+    transition: transform 180ms ease, box-shadow 180ms ease, z-index 0s 0s;
+  }
+  .hm .cell .tip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #FFFFFF;
+    padding: 6px 10px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms;
+    z-index: 10;
+    border-radius: 2px;
+  }
+  .hm .cell .tip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--ink);
+  }
+  .hm .cell:hover .tip { opacity: 1; }
+
+  /* Heatmap view toggles */
+  .hm-toggle { display: inline-flex; gap: 4px; }
+  .hm-toggle button {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 9px;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 160ms;
+  }
+  .hm-toggle button:hover { border-color: var(--ink); color: var(--ink); }
+  .hm-toggle button.on {
+    background: var(--ink);
+    color: var(--surface);
+    border-color: var(--ink);
+  }
+
+  .hm-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-6);
+    padding: var(--sp-4) var(--sp-6);
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .hm-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .hm-legend i {
+    display: inline-block;
+    width: 14px; height: 10px;
+  }
+  .hm-legend i[data-sev="3"] { background: #7C2D12; }
+  .hm-legend i[data-sev="2"] { background: #B45309; }
+  .hm-legend i[data-sev="1"] { background: #CA8A04; }
+  .hm-legend i[data-sev="0"] { background: #CBD5E1; }
+
+  /* ---------- Timeline ---------- */
+  .tl-wrap { padding: var(--sp-6) var(--sp-8) var(--sp-8); }
+  .tl-svg { width: 100%; height: 320px; display: block; overflow: visible; }
+  .tl-svg .axis { stroke: var(--rule-strong); stroke-width: 1; }
+  .tl-svg .tick { stroke: var(--rule); stroke-width: 1; }
+  .tl-svg .year-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    fill: var(--muted);
+    text-transform: uppercase;
+  }
+  .tl-svg .event-dot {
+    transition: r 160ms ease, filter 160ms ease;
+    cursor: pointer;
+  }
+  .tl-svg .event-dot:hover { filter: drop-shadow(0 3px 8px rgba(15,23,42,0.3)); }
+  .tl-svg .event-line { stroke-width: 1; opacity: 0.5; }
+  .tl-svg .event-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    fill: var(--ink);
+  }
+  .tl-svg .event-ctry {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    fill: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ---------- Comparison Lab ---------- */
+  .comp-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .comp-chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 7px 12px;
+    border: 1px solid var(--rule-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 160ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .comp-chip .dot {
+    width: 8px; height: 8px;
+    display: inline-block;
+    background: var(--rule-strong);
+  }
+  .comp-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .comp-chip.active { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .comp-chip.active .dot { background: var(--accent); }
+  .comp-chip[disabled] { opacity: 0.35; cursor: not-allowed; }
+  .comp-chip[disabled]:hover { border-color: var(--rule-strong); color: var(--ink); }
+  .comp-counter {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+  }
+
+  .comp-dims { padding: var(--sp-6) var(--sp-8); }
+  .comp-dim {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: var(--sp-6);
+    padding: var(--sp-4) 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: flex-start;
+  }
+  .comp-dim:last-child { border-bottom: 0; }
+  .comp-dim-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding-top: 4px;
+  }
+  .comp-dim-label .n {
+    color: var(--accent);
+    margin-right: 6px;
+    font-weight: 600;
+  }
+  .comp-dim-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .comp-bar {
+    display: grid;
+    grid-template-columns: 46px 1fr 88px;
+    gap: 10px;
+    align-items: center;
+  }
+  .comp-bar-ctry {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .comp-bar-track {
+    height: 10px;
+    background: var(--surface-sunk);
+    border: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-bar-fill {
+    height: 100%;
+    width: 0;
+    transition: width 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .comp-bar-fill[data-sev="3"] { background: var(--strict); }
+  .comp-bar-fill[data-sev="2"] { background: var(--moderate); }
+  .comp-bar-fill[data-sev="1"] { background: var(--light-sev); }
+  .comp-bar-fill[data-sev="0"] { background: var(--rule-strong); }
+  .comp-bar-sev {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+  .comp-bar-sev[data-sev="3"] { color: var(--strict); }
+  .comp-bar-sev[data-sev="2"] { color: var(--moderate); }
+  .comp-bar-sev[data-sev="1"] { color: var(--light-sev); }
+  .comp-bar-sev[data-sev="0"] { color: var(--muted); }
+  .comp-empty {
+    padding: var(--sp-12) var(--sp-8);
+    text-align: center;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Flow chart ---------- */
+  .flow-wrap {
+    padding: var(--sp-8);
+    overflow-x: auto;
+  }
+  .flow-svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+  }
+  .flow-svg .f-node { fill: var(--surface); stroke: var(--rule-strong); stroke-width: 1.25; }
+  .flow-svg .f-node.start, .flow-svg .f-node.end { fill: var(--ink); stroke: var(--ink); }
+  .flow-svg .f-node.decision { fill: #FDF3E7; stroke: var(--accent); stroke-width: 1.5; }
+  .flow-svg .f-node.t-strict { fill: #FBF2ED; stroke: var(--strict); stroke-width: 1.5; }
+  .flow-svg .f-node.t-moderate { fill: #FDF3E7; stroke: var(--moderate); stroke-width: 1.5; }
+  .flow-svg .f-node.t-light { fill: #FEF9E7; stroke: var(--light-sev); stroke-width: 1.5; }
+  .flow-svg .f-text { font-family: var(--sans); font-size: 12px; fill: var(--ink); }
+  .flow-svg .f-text.cap { font-size: 10px; font-family: var(--mono); letter-spacing: 0.14em; text-transform: uppercase; fill: var(--muted); }
+  .flow-svg .f-text.end-txt, .flow-svg .f-text.start-txt { fill: #FFFFFF; font-weight: 600; }
+  .flow-svg .f-text.t-strict { fill: var(--strict); font-weight: 600; }
+  .flow-svg .f-text.t-moderate { fill: var(--moderate); font-weight: 600; }
+  .flow-svg .f-text.t-light { fill: #854D0E; font-weight: 600; }
+  .flow-svg .f-edge { stroke: var(--rule-strong); stroke-width: 1.5; fill: none; }
+  .flow-svg .f-edge-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    fill: var(--muted);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .flow-svg .f-edge-label.yes { fill: var(--strict); }
+  .flow-svg .f-edge-label.no  { fill: var(--muted); }
+
+  .flow-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-6);
+    padding: var(--sp-4) var(--sp-8);
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface-sunk);
+  }
+  .flow-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .flow-legend i {
+    display: inline-block;
+    width: 14px; height: 10px;
+    border: 1px solid var(--rule-strong);
+  }
+  .flow-legend i.decision { background: #FDF3E7; border-color: var(--accent); }
+  .flow-legend i.action { background: var(--surface); }
+  .flow-legend i.strict { background: #FBF2ED; border-color: var(--strict); }
+  .flow-legend i.moderate { background: #FDF3E7; border-color: var(--moderate); }
+  .flow-legend i.light { background: #FEF9E7; border-color: var(--light-sev); }
+
+  /* Make matrix rows interactive (sortable severity matrix) */
+  table.matrix tbody tr { transition: background 160ms; }
+  table.matrix tbody tr:hover { background: #FDF3E7; }
+
+  /* ---------- Responsive tweaks ---------- */
+  @media (max-width: 780px) {
+    .hm { grid-template-columns: 120px repeat(4, 1fr); }
+    .hm > * { padding: 10px 8px; font-size: 11px; min-height: 40px; }
+    .hm .colh { font-size: 9px; }
+    .comp-dim { grid-template-columns: 1fr; gap: var(--sp-3); }
+    .comp-bar { grid-template-columns: 40px 1fr 70px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
@@ -389,6 +839,8 @@
   @media print {
     .toc { position: static; }
     .country { page-break-inside: avoid; }
+    .hm .cell .tip { display: none; }
+    .comp-chips, .hm-toggle { display: none; }
   }
 </style>
 </head>
@@ -417,6 +869,7 @@
   <div class="shell toc-inner">
     <span class="toc-label">Jump to</span>
     <ul>
+      <li><a href="#atglance">↳ At a Glance</a></li>
       <li><a href="#indonesia">01 · Indonesia</a></li>
       <li><a href="#india">02 · India</a></li>
       <li><a href="#taiwan">03 · Taiwan</a></li>
@@ -427,7 +880,9 @@
       <li><a href="#malaysia">08 · Malaysia</a></li>
       <li><a href="#australia">09 · Australia</a></li>
       <li><a href="#thailand">10 · Thailand</a></li>
-      <li><a href="#matrix">↳ Comparative Matrix</a></li>
+      <li><a href="#matrix">↳ Matrix</a></li>
+      <li><a href="#compare">↳ Comparison Lab</a></li>
+      <li><a href="#flow">↳ Decision Flow</a></li>
     </ul>
   </div>
 </nav>
@@ -461,6 +916,48 @@
           <dd>No explicit mandate. Industry practice or commercial considerations apply.</dd>
         </dl>
       </aside>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- AT A GLANCE — regional heatmap + legislative timeline          -->
+  <!-- ============================================================= -->
+  <section id="atglance" class="vs">
+    <div class="eyebrow">Regional Overview</div>
+    <h2>At a Glance — Localization &amp; Isolation Heat Map</h2>
+    <p class="sub">
+      A color-coded view of binding severity across the four dimensions that most directly shape deployment topology. Toggle columns to reframe the heatmap. Hover any cell for the governing instrument.
+    </p>
+
+    <div class="vcard" style="margin-bottom: var(--sp-8);">
+      <div class="vcard-head">
+        <span>Severity by Jurisdiction &middot; 10 × 4</span>
+        <div class="hm-toggle" role="tablist" aria-label="Heatmap sort">
+          <button type="button" data-sort="idx" class="on">Default</button>
+          <button type="button" data-sort="total">Strictest first</button>
+          <button type="button" data-sort="alpha">A → Z</button>
+        </div>
+      </div>
+      <div class="hm" id="hm" role="table" aria-label="APAC severity heatmap">
+        <!-- rendered by JS -->
+      </div>
+      <div class="hm-legend" aria-label="Severity legend">
+        <span><i data-sev="3"></i> Strict</span>
+        <span><i data-sev="2"></i> Moderate</span>
+        <span><i data-sev="1"></i> Light</span>
+        <span><i data-sev="0"></i> None</span>
+        <span style="margin-left:auto; color: var(--muted-2);">Hover for anchor instrument</span>
+      </div>
+    </div>
+
+    <div class="vcard">
+      <div class="vcard-head">
+        <span>Legislative Timeline — Milestones Shaping Today's Architecture</span>
+        <span class="comp-counter">2008 → 2026</span>
+      </div>
+      <div class="tl-wrap">
+        <svg class="tl-svg" id="tl" viewBox="0 0 1200 320" preserveAspectRatio="xMidYMid meet" aria-label="Timeline of APAC financial-services legislation"></svg>
+      </div>
     </div>
   </section>
 
@@ -2171,6 +2668,214 @@
     </p>
   </section>
 
+  <!-- ============================================================= -->
+  <!-- COMPARISON LAB — interactive side-by-side                      -->
+  <!-- ============================================================= -->
+  <section id="compare" class="vs">
+    <div class="eyebrow">Synthesis · Interactive</div>
+    <h2>Comparison Lab</h2>
+    <p class="sub">
+      Select up to three jurisdictions to see their binding-severity profile side by side across the four topology-shaping dimensions. Useful for triaging a regional build when you must pick a primary, a secondary, and an exception.
+    </p>
+
+    <div class="vcard">
+      <div class="vcard-head">
+        <span>Pick Jurisdictions</span>
+        <span class="comp-counter" id="compCounter">0 / 3 selected</span>
+      </div>
+      <div style="padding: var(--sp-6) var(--sp-8); border-bottom: 1px solid var(--rule);">
+        <div class="comp-chips" id="compChips" role="group" aria-label="Select jurisdictions to compare">
+          <!-- populated by JS -->
+        </div>
+      </div>
+      <div class="comp-dims" id="compDims" aria-live="polite">
+        <div class="comp-empty">Select a jurisdiction above to begin.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= -->
+  <!-- DECISION FLOW — architecture placement flowchart               -->
+  <!-- ============================================================= -->
+  <section id="flow" class="vs">
+    <div class="eyebrow">Synthesis · Playbook</div>
+    <h2>Architecture Decision Flow — Where Does This Workload Live?</h2>
+    <p class="sub">
+      A compact decision tree for siting a new workload. Start at the top; follow the path that matches your data classification, jurisdiction and regulator posture. Terminal nodes give the binding architecture the rule set implies, not a legal conclusion.
+    </p>
+
+    <div class="vcard">
+      <div class="vcard-head">
+        <span>Placement Decision Tree</span>
+        <span class="comp-counter">Binding · APAC · 2026</span>
+      </div>
+      <div class="flow-wrap">
+        <svg class="flow-svg" viewBox="0 0 1120 820" preserveAspectRatio="xMidYMid meet" aria-label="Workload placement decision tree">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#CBD5E1"/>
+            </marker>
+          </defs>
+
+          <!-- START -->
+          <g>
+            <rect class="f-node start" x="460" y="10" width="200" height="46" rx="2" />
+            <text class="f-text start-txt" x="560" y="38" text-anchor="middle">New workload in APAC jurisdiction</text>
+          </g>
+          <path class="f-edge" d="M 560 56 L 560 90" marker-end="url(#arrow)"/>
+
+          <!-- D1: Payment / systemically-important? -->
+          <g>
+            <rect class="f-node decision" x="380" y="90" width="360" height="70" rx="2"/>
+            <text class="f-text cap" x="560" y="112" text-anchor="middle">Decision 01</text>
+            <text class="f-text decision" x="560" y="136" text-anchor="middle">Is the workload a domestic payment rail,</text>
+            <text class="f-text decision" x="560" y="152" text-anchor="middle">switching, or systemically-important service?</text>
+          </g>
+
+          <!-- D1 -> D2 (No, left) -->
+          <path class="f-edge" d="M 380 125 L 220 125 L 220 200" marker-end="url(#arrow)"/>
+          <text class="f-edge-label no" x="300" y="118" text-anchor="middle">No</text>
+
+          <!-- D1 -> T-STRICT-1 branch (Yes, right) -->
+          <path class="f-edge" d="M 740 125 L 900 125 L 900 200" marker-end="url(#arrow)"/>
+          <text class="f-edge-label yes" x="820" y="118" text-anchor="middle">Yes</text>
+
+          <!-- T-STRICT-1 box -->
+          <g>
+            <rect class="f-node t-strict" x="740" y="200" width="320" height="110" rx="2"/>
+            <text class="f-text cap" x="900" y="224" text-anchor="middle">Terminal · STRICT</text>
+            <text class="f-text t-strict" x="900" y="248" text-anchor="middle">Onshore primary processing</text>
+            <text class="f-text" x="900" y="268" text-anchor="middle" style="font-size:11px;">Dedicated / single-tenant enclave</text>
+            <text class="f-text" x="900" y="284" text-anchor="middle" style="font-size:11px;">Onshore HSM · local DR</text>
+            <text class="f-text cap" x="900" y="302" text-anchor="middle" style="font-size:9px;">CN · IN · ID · (HK/TH payment rails)</text>
+          </g>
+
+          <!-- D2: PII / customer data? -->
+          <g>
+            <rect class="f-node decision" x="60" y="200" width="320" height="70" rx="2"/>
+            <text class="f-text cap" x="220" y="222" text-anchor="middle">Decision 02</text>
+            <text class="f-text decision" x="220" y="246" text-anchor="middle">Does the workload process</text>
+            <text class="f-text decision" x="220" y="262" text-anchor="middle">customer PII or regulated records?</text>
+          </g>
+
+          <!-- D2 -> D3 (Yes) -->
+          <path class="f-edge" d="M 220 270 L 220 340" marker-end="url(#arrow)"/>
+          <text class="f-edge-label yes" x="250" y="310" text-anchor="start">Yes</text>
+
+          <!-- D2 -> T-LIGHT (No, to right) -->
+          <path class="f-edge" d="M 380 235 L 460 235 L 460 340" marker-end="url(#arrow)"/>
+          <text class="f-edge-label no" x="420" y="228" text-anchor="middle">No</text>
+
+          <!-- D3: Jurisdiction severity? -->
+          <g>
+            <rect class="f-node decision" x="60" y="340" width="320" height="70" rx="2"/>
+            <text class="f-text cap" x="220" y="362" text-anchor="middle">Decision 03</text>
+            <text class="f-text decision" x="220" y="386" text-anchor="middle">Is the jurisdiction in the</text>
+            <text class="f-text decision" x="220" y="402" text-anchor="middle"><tspan fill="#7C2D12">Strict</tspan> or <tspan fill="#B45309">Moderate</tspan> band?</text>
+          </g>
+
+          <!-- D3 -> T-STRICT-2 (Yes / Strict) -->
+          <path class="f-edge" d="M 60 375 L 20 375 L 20 480 L 100 480" marker-end="url(#arrow)"/>
+          <text class="f-edge-label yes" x="10" y="425" text-anchor="end">Strict</text>
+
+          <!-- D3 -> T-MOD (Moderate center) -->
+          <path class="f-edge" d="M 220 410 L 220 480" marker-end="url(#arrow)"/>
+          <text class="f-edge-label" x="235" y="450" text-anchor="start" style="fill:#B45309;">Mod.</text>
+
+          <!-- D3 -> D4 (Light/None, No) -->
+          <path class="f-edge" d="M 380 375 L 460 375 L 460 480" marker-end="url(#arrow)"/>
+          <text class="f-edge-label no" x="420" y="368" text-anchor="middle">Light / None</text>
+
+          <!-- T-STRICT-2 -->
+          <g>
+            <rect class="f-node t-strict" x="40" y="480" width="200" height="110" rx="2"/>
+            <text class="f-text cap" x="140" y="504" text-anchor="middle">Terminal · STRICT</text>
+            <text class="f-text t-strict" x="140" y="528" text-anchor="middle">Onshore primary copy</text>
+            <text class="f-text" x="140" y="548" text-anchor="middle" style="font-size:11px;">Regulator-accessible</text>
+            <text class="f-text" x="140" y="564" text-anchor="middle" style="font-size:11px;">Cross-border mirror only</text>
+            <text class="f-text cap" x="140" y="582" text-anchor="middle" style="font-size:9px;">CN · IN</text>
+          </g>
+
+          <!-- T-MOD -->
+          <g>
+            <rect class="f-node t-moderate" x="260" y="480" width="180" height="110" rx="2"/>
+            <text class="f-text cap" x="350" y="504" text-anchor="middle">Terminal · MODERATE</text>
+            <text class="f-text t-moderate" x="350" y="528" text-anchor="middle">Onshore + mirror</text>
+            <text class="f-text" x="350" y="548" text-anchor="middle" style="font-size:11px;">Regulator notification</text>
+            <text class="f-text" x="350" y="564" text-anchor="middle" style="font-size:11px;">Approved cross-border</text>
+            <text class="f-text cap" x="350" y="582" text-anchor="middle" style="font-size:9px;">ID · MY · TW</text>
+          </g>
+
+          <!-- D4: Cross-border approval path? -->
+          <g>
+            <rect class="f-node decision" x="380" y="480" width="280" height="70" rx="2"/>
+            <text class="f-text cap" x="520" y="502" text-anchor="middle">Decision 04</text>
+            <text class="f-text decision" x="520" y="526" text-anchor="middle">Adequacy / SCCs / consent</text>
+            <text class="f-text decision" x="520" y="542" text-anchor="middle">in place for outbound transfer?</text>
+          </g>
+
+          <!-- D4 -> T-LIGHT (Yes) -->
+          <path class="f-edge" d="M 660 515 L 740 515" marker-end="url(#arrow)"/>
+          <text class="f-edge-label yes" x="700" y="508" text-anchor="middle">Yes</text>
+
+          <!-- D4 -> T-MOD-2 (No, to bottom) -->
+          <path class="f-edge" d="M 520 550 L 520 640" marker-end="url(#arrow)"/>
+          <text class="f-edge-label no" x="535" y="600" text-anchor="start">No</text>
+
+          <!-- T-LIGHT (cross-border OK) -->
+          <g>
+            <rect class="f-node t-light" x="740" y="460" width="340" height="110" rx="2"/>
+            <text class="f-text cap" x="910" y="484" text-anchor="middle">Terminal · LIGHT</text>
+            <text class="f-text t-light" x="910" y="508" text-anchor="middle">Regional hub / offshore permitted</text>
+            <text class="f-text" x="910" y="528" text-anchor="middle" style="font-size:11px;">Multi-tenant with controls</text>
+            <text class="f-text" x="910" y="544" text-anchor="middle" style="font-size:11px;">Privacy notice + safeguards</text>
+            <text class="f-text cap" x="910" y="562" text-anchor="middle" style="font-size:9px;">SG · JP · HK · AU · TH</text>
+          </g>
+
+          <!-- T-MOD-2 (forced onshore due to no transfer basis) -->
+          <g>
+            <rect class="f-node t-moderate" x="380" y="640" width="280" height="100" rx="2"/>
+            <text class="f-text cap" x="520" y="664" text-anchor="middle">Terminal · MODERATE</text>
+            <text class="f-text t-moderate" x="520" y="688" text-anchor="middle">Retain onshore until</text>
+            <text class="f-text t-moderate" x="520" y="704" text-anchor="middle">transfer basis established</text>
+            <text class="f-text" x="520" y="722" text-anchor="middle" style="font-size:11px;">Execute SCC / consent workflow</text>
+          </g>
+
+          <!-- D5: Workload isolation expectation? -->
+          <!-- This runs parallel: apply workload-isolation layer regardless of path -->
+          <g>
+            <rect class="f-node" x="40" y="640" width="320" height="100" rx="2"/>
+            <text class="f-text cap" x="200" y="664" text-anchor="middle">Overlay · Workload Isolation</text>
+            <text class="f-text" x="200" y="688" text-anchor="middle">Apply segregation floor:</text>
+            <text class="f-text" x="200" y="706" text-anchor="middle" style="font-size:11px;">• Multi-tenant OK with controls</text>
+            <text class="f-text" x="200" y="722" text-anchor="middle" style="font-size:11px;">• Single-tenant for payment / keys</text>
+          </g>
+
+          <!-- Final sync arrow -->
+          <path class="f-edge" d="M 140 590 L 140 620 L 200 620 L 200 640" marker-end="url(#arrow)" stroke-dasharray="4 4"/>
+          <path class="f-edge" d="M 350 590 L 350 620 L 200 620" marker-end="url(#arrow)" stroke-dasharray="4 4" style="marker-end:none;"/>
+
+          <!-- END node -->
+          <g>
+            <rect class="f-node end" x="420" y="760" width="280" height="46" rx="2"/>
+            <text class="f-text end-txt" x="560" y="788" text-anchor="middle">Compose deployment topology</text>
+          </g>
+          <path class="f-edge" d="M 200 740 L 200 775 L 420 775" marker-end="url(#arrow)"/>
+          <path class="f-edge" d="M 520 740 L 520 760" marker-end="url(#arrow)"/>
+          <path class="f-edge" d="M 910 570 L 910 775 L 700 775" marker-end="url(#arrow)"/>
+          <path class="f-edge" d="M 140 590 L 140 775 L 420 775" marker-end="url(#arrow)"/>
+        </svg>
+      </div>
+      <div class="flow-legend">
+        <span><i class="decision"></i> Decision</span>
+        <span><i class="strict"></i> Strict terminal</span>
+        <span><i class="moderate"></i> Moderate terminal</span>
+        <span><i class="light"></i> Light terminal</span>
+        <span style="margin-left:auto;">Arrows read top-down · dashed = overlay</span>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <div class="row">
       <p>© 2026 · APAC FinTech Architecture Research Brief · Prepared for internal solutions-architecture use.</p>
@@ -2181,7 +2886,565 @@
 </main>
 
 <script>
-  // Smooth scroll with sticky-TOC offset compensation
+  /* ================================================================
+   * DATA MODEL — severity scores and legislative timeline
+   * ================================================================ */
+
+  var SEV_LABEL = ['None', 'Light', 'Moderate', 'Strict'];
+
+  var DIMS = [
+    { key: 'data',     num: '02', label: 'Data Localization' },
+    { key: 'sys',      num: '03', label: 'System / Process' },
+    { key: 'entity',   num: '04', label: 'Legal Entity' },
+    { key: 'workload', num: '05', label: 'Workload Isolation' }
+  ];
+
+  var COUNTRIES = [
+    { id:'indonesia', code:'ID', name:'Indonesia', idx:1,  sev:{data:2, sys:3, entity:2, workload:2}, anchor:'BI PBI 19/14/PBI/2017 · OJK POJK 11/2022' },
+    { id:'india',     code:'IN', name:'India',     idx:2,  sev:{data:3, sys:3, entity:2, workload:2}, anchor:'RBI Payment Localization (2018) · Master Direction IT Outsourcing (2023)' },
+    { id:'taiwan',    code:'TW', name:'Taiwan',    idx:3,  sev:{data:2, sys:2, entity:2, workload:2}, anchor:'FSC Outsourcing Regulations' },
+    { id:'japan',     code:'JP', name:'Japan',     idx:4,  sev:{data:1, sys:1, entity:1, workload:2}, anchor:'FISC Security Guidelines · APPI' },
+    { id:'china',     code:'CN', name:'China',     idx:5,  sev:{data:3, sys:3, entity:3, workload:3}, anchor:'CSL · DSL · PIPL · MLPS 2.0 · SM crypto' },
+    { id:'hongkong',  code:'HK', name:'Hong Kong', idx:6,  sev:{data:1, sys:2, entity:1, workload:2}, anchor:'HKMA SA-2 · TM-E-1 · CFI 2.0' },
+    { id:'singapore', code:'SG', name:'Singapore', idx:7,  sev:{data:1, sys:1, entity:1, workload:2}, anchor:'MAS TRM · Notices 655 / 644' },
+    { id:'malaysia',  code:'MY', name:'Malaysia',  idx:8,  sev:{data:2, sys:2, entity:2, workload:2}, anchor:'BNM RMiT · Outsourcing Policy' },
+    { id:'australia', code:'AU', name:'Australia', idx:9,  sev:{data:0, sys:1, entity:1, workload:2}, anchor:'APRA CPS 234 / CPS 230 · CDR · SOCI' },
+    { id:'thailand',  code:'TH', name:'Thailand',  idx:10, sev:{data:1, sys:2, entity:1, workload:2}, anchor:'BOT IT Risk / Outsourcing Notifications · PDPA' }
+  ];
+
+  var KEY_LAWS = [
+    { year: 2008, code: 'TH', label: 'FI Business Act' },
+    { year: 2010, code: 'ID', label: 'AML Law 8/2010' },
+    { year: 2012, code: 'SG', label: 'PDPA enacted' },
+    { year: 2015, code: 'IN', label: 'Digital India · RBI cyber' },
+    { year: 2017, code: 'CN', label: 'Cybersecurity Law' },
+    { year: 2017, code: 'ID', label: 'BI PBI 19/14 (payment loc.)' },
+    { year: 2018, code: 'IN', label: 'RBI Payment Localization' },
+    { year: 2019, code: 'TH', label: 'PDPA · Cybersecurity Act' },
+    { year: 2019, code: 'ID', label: 'GR 71/2019 (ESO scope)' },
+    { year: 2020, code: 'JP', label: 'APPI amendments' },
+    { year: 2020, code: 'MY', label: 'BNM RMiT' },
+    { year: 2021, code: 'CN', label: 'PIPL · DSL in force' },
+    { year: 2021, code: 'AU', label: 'SOCI amended · Ransomware Plan' },
+    { year: 2022, code: 'HK', label: 'HKMA CFI · SA-2 v2' },
+    { year: 2022, code: 'ID', label: 'PDP Law · POJK 11/2022' },
+    { year: 2023, code: 'IN', label: 'DPDP Act · RBI Master Direction' },
+    { year: 2024, code: 'SG', label: 'MAS CIR / cloud update' },
+    { year: 2025, code: 'AU', label: 'APRA CPS 230 in force' },
+    { year: 2026, code: 'HK', label: 'CFI 2.0 rollout' }
+  ];
+
+  var byId = {};
+  COUNTRIES.forEach(function (c) { byId[c.id] = c; });
+
+  /* ================================================================
+   * FLAG SVG MARKUP — compact, recognizable inline flags
+   * ================================================================ */
+  var FLAGS = {
+    // Indonesia — red over white
+    ID: '<svg viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="24" height="8" fill="#CE1126"/>' +
+        '<rect y="8" width="24" height="8" fill="#FFFFFF"/>' +
+        '</svg>',
+
+    // India — saffron / white / green with Ashoka Chakra (simplified)
+    IN: '<svg viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="24" height="5.33" fill="#FF9933"/>' +
+        '<rect y="5.33" width="24" height="5.34" fill="#FFFFFF"/>' +
+        '<rect y="10.67" width="24" height="5.33" fill="#138808"/>' +
+        '<g transform="translate(12 8)" fill="none" stroke="#000080" stroke-width="0.4">' +
+          '<circle r="1.9"/>' +
+          '<line x1="-1.9" y1="0" x2="1.9" y2="0"/>' +
+          '<line x1="0" y1="-1.9" x2="0" y2="1.9"/>' +
+          '<line x1="-1.34" y1="-1.34" x2="1.34" y2="1.34"/>' +
+          '<line x1="-1.34" y1="1.34" x2="1.34" y2="-1.34"/>' +
+        '</g>' +
+        '</svg>',
+
+    // Taiwan — red with blue canton + white sun (simplified)
+    TW: '<svg viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="24" height="16" fill="#FE0000"/>' +
+        '<rect width="12" height="8" fill="#000095"/>' +
+        '<g transform="translate(6 4)" fill="#FFFFFF">' +
+          '<circle r="2.3"/>' +
+          '<g fill="#000095"><circle r="1.1"/></g>' +
+          '<g stroke="#FFFFFF" stroke-width="0.6">' +
+            '<line x1="0" y1="-2.4" x2="0" y2="-1.5"/>' +
+            '<line x1="0" y1="1.5" x2="0" y2="2.4"/>' +
+            '<line x1="-2.4" y1="0" x2="-1.5" y2="0"/>' +
+            '<line x1="1.5" y1="0" x2="2.4" y2="0"/>' +
+          '</g>' +
+        '</g>' +
+        '</svg>',
+
+    // Japan — white with red sun
+    JP: '<svg viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="24" height="16" fill="#FFFFFF"/>' +
+        '<circle cx="12" cy="8" r="4.8" fill="#BC002D"/>' +
+        '</svg>',
+
+    // China — red with large star + 4 small stars
+    CN: '<svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="30" height="20" fill="#DE2910"/>' +
+        '<g fill="#FFDE00">' +
+          // Large star (centered around 5,5)
+          '<polygon points="5,1.5 5.82,3.85 8.28,3.85 6.29,5.35 7.03,7.7 5,6.28 2.97,7.7 3.71,5.35 1.72,3.85 4.18,3.85"/>' +
+          // 4 small stars arc
+          '<circle cx="10" cy="2" r="0.7"/>' +
+          '<circle cx="12" cy="4" r="0.7"/>' +
+          '<circle cx="12" cy="7" r="0.7"/>' +
+          '<circle cx="10" cy="9" r="0.7"/>' +
+        '</g>' +
+        '</svg>',
+
+    // Hong Kong — red with simplified 5-petal bauhinia
+    HK: '<svg viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="24" height="16" fill="#DE2910"/>' +
+        '<g transform="translate(12 8)" fill="#FFFFFF">' +
+          '<ellipse cx="0" cy="-3" rx="1.5" ry="2.2"/>' +
+          '<ellipse cx="0" cy="-3" rx="1.5" ry="2.2" transform="rotate(72)"/>' +
+          '<ellipse cx="0" cy="-3" rx="1.5" ry="2.2" transform="rotate(144)"/>' +
+          '<ellipse cx="0" cy="-3" rx="1.5" ry="2.2" transform="rotate(216)"/>' +
+          '<ellipse cx="0" cy="-3" rx="1.5" ry="2.2" transform="rotate(288)"/>' +
+          '<circle r="0.9" fill="#DE2910"/>' +
+        '</g>' +
+        '</svg>',
+
+    // Singapore — red over white with crescent + 5 stars
+    SG: '<svg viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="24" height="8" fill="#EF3340"/>' +
+        '<rect y="8" width="24" height="8" fill="#FFFFFF"/>' +
+        '<g fill="#FFFFFF">' +
+          '<circle cx="5" cy="4" r="2.8"/>' +
+        '</g>' +
+        '<circle cx="6.4" cy="4" r="2.3" fill="#EF3340"/>' +
+        '<g fill="#FFFFFF">' +
+          '<circle cx="9.2" cy="2.3" r="0.55"/>' +
+          '<circle cx="11.7" cy="2.3" r="0.55"/>' +
+          '<circle cx="14.2" cy="2.3" r="0.55"/>' +
+          '<circle cx="10.4" cy="4.6" r="0.55"/>' +
+          '<circle cx="12.9" cy="4.6" r="0.55"/>' +
+        '</g>' +
+        '</svg>',
+
+    // Malaysia — red/white stripes, blue canton with yellow crescent + star
+    MY: '<svg viewBox="0 0 28 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="28" height="16" fill="#FFFFFF"/>' +
+        '<g fill="#CC0000">' +
+          '<rect width="28" height="1.14"/>' +
+          '<rect y="2.29" width="28" height="1.14"/>' +
+          '<rect y="4.57" width="28" height="1.14"/>' +
+          '<rect y="6.86" width="28" height="1.14"/>' +
+          '<rect y="9.14" width="28" height="1.14"/>' +
+          '<rect y="11.43" width="28" height="1.14"/>' +
+          '<rect y="13.71" width="28" height="1.14"/>' +
+        '</g>' +
+        '<rect width="14" height="8.57" fill="#010066"/>' +
+        '<circle cx="5.5" cy="4.3" r="2.6" fill="#FFCC00"/>' +
+        '<circle cx="6.7" cy="4.3" r="2.15" fill="#010066"/>' +
+        '<polygon fill="#FFCC00" points="9.5,4.3 10.1,5 11,5 10.3,5.6 10.6,6.5 9.5,6 8.4,6.5 8.7,5.6 8,5 8.9,5"/>' +
+        '</svg>',
+
+    // Australia — blue with Union Jack + Commonwealth + Southern Cross
+    AU: '<svg viewBox="0 0 32 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="32" height="16" fill="#012169"/>' +
+        // Union Jack canton (simplified)
+        '<g>' +
+          '<path d="M0,0 L16,8 M16,0 L0,8" stroke="#FFFFFF" stroke-width="1.8"/>' +
+          '<path d="M0,0 L16,8 M16,0 L0,8" stroke="#C8102E" stroke-width="0.8"/>' +
+          '<path d="M8,0 L8,8 M0,4 L16,4" stroke="#FFFFFF" stroke-width="2.4"/>' +
+          '<path d="M8,0 L8,8 M0,4 L16,4" stroke="#C8102E" stroke-width="1.4"/>' +
+        '</g>' +
+        // Commonwealth star (below canton)
+        '<polygon fill="#FFFFFF" points="8,11 8.6,12.6 10.2,12.6 8.9,13.5 9.4,15 8,14.1 6.6,15 7.1,13.5 5.8,12.6 7.4,12.6"/>' +
+        // Southern Cross (right half)
+        '<g fill="#FFFFFF">' +
+          '<circle cx="22" cy="4" r="0.8"/>' +
+          '<circle cx="26" cy="6" r="0.9"/>' +
+          '<circle cx="21" cy="9" r="0.7"/>' +
+          '<circle cx="25" cy="11" r="1"/>' +
+          '<circle cx="28" cy="13.5" r="0.5"/>' +
+        '</g>' +
+        '</svg>',
+
+    // Thailand — 5 horizontal stripes
+    TH: '<svg viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">' +
+        '<rect width="24" height="2.67" fill="#A51931"/>' +
+        '<rect y="2.67" width="24" height="2.66" fill="#F4F5F8"/>' +
+        '<rect y="5.33" width="24" height="5.34" fill="#2D2A4A"/>' +
+        '<rect y="10.67" width="24" height="2.66" fill="#F4F5F8"/>' +
+        '<rect y="13.33" width="24" height="2.67" fill="#A51931"/>' +
+        '</svg>'
+  };
+
+  function flagHTML(code, size) {
+    var svg = FLAGS[code] || '';
+    var cls = 'flag' + (size ? ' ' + size : '');
+    return '<span class="' + cls + '" aria-label="' + code + ' flag" role="img">' + svg + '</span>';
+  }
+  function flagEl(code, size) {
+    var span = document.createElement('span');
+    span.className = 'flag' + (size ? ' ' + size : '');
+    span.setAttribute('role', 'img');
+    span.setAttribute('aria-label', code + ' flag');
+    span.innerHTML = FLAGS[code] || '';
+    return span;
+  }
+
+  /* ================================================================
+   * MINI SEVERITY INDICATORS + FLAG on each country header
+   * ================================================================ */
+  (function injectCountryHead() {
+    COUNTRIES.forEach(function (c) {
+      var section = document.getElementById(c.id);
+      if (!section) return;
+      var head = section.querySelector('.country-head');
+      if (!head) return;
+
+      // Inject large flag into the first cell (index + name)
+      var first = head.children[0];
+      if (first && !first.querySelector('.flag')) {
+        var textWrap = document.createElement('div');
+        textWrap.className = 'ch-text';
+        while (first.firstChild) textWrap.appendChild(first.firstChild);
+        var f = flagEl(c.code, 'lg');
+        first.appendChild(f);
+        first.appendChild(textWrap);
+      }
+
+      var middle = head.children[1]; // empty slot
+      if (!middle) return;
+
+      var wrap = document.createElement('div');
+      wrap.className = 'mini-sev';
+      var pips = document.createElement('div');
+      pips.className = 'mini-sev-pips';
+      pips.setAttribute('title', 'Data · System · Entity · Workload severity');
+      DIMS.forEach(function (d) {
+        var s = document.createElement('span');
+        s.className = 'pip';
+        s.setAttribute('data-sev', c.sev[d.key]);
+        s.setAttribute('aria-label', d.label + ': ' + SEV_LABEL[c.sev[d.key]]);
+        s.title = d.label + ' — ' + SEV_LABEL[c.sev[d.key]];
+        pips.appendChild(s);
+      });
+      var label = document.createElement('span');
+      label.className = 'mini-sev-label';
+      label.textContent = 'Data · Sys · Entity · Workload';
+      wrap.appendChild(pips);
+      wrap.appendChild(label);
+      middle.appendChild(wrap);
+    });
+  })();
+
+  /* ================================================================
+   * HEATMAP
+   * ================================================================ */
+  var HM = document.getElementById('hm');
+  var sortMode = 'idx';
+
+  function renderHeatmap() {
+    if (!HM) return;
+    HM.innerHTML = '';
+    // Header row
+    var corner = document.createElement('div');
+    corner.className = 'corner';
+    corner.textContent = 'Jurisdiction';
+    HM.appendChild(corner);
+    DIMS.forEach(function (d) {
+      var h = document.createElement('div');
+      h.className = 'colh';
+      h.textContent = d.label;
+      HM.appendChild(h);
+    });
+
+    var list = COUNTRIES.slice();
+    if (sortMode === 'total') {
+      list.sort(function (a, b) {
+        var ta = a.sev.data + a.sev.sys + a.sev.entity + a.sev.workload;
+        var tb = b.sev.data + b.sev.sys + b.sev.entity + b.sev.workload;
+        return tb - ta || a.idx - b.idx;
+      });
+    } else if (sortMode === 'alpha') {
+      list.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    } else {
+      list.sort(function (a, b) { return a.idx - b.idx; });
+    }
+
+    list.forEach(function (c) {
+      var row = document.createElement('div');
+      row.className = 'rowh';
+      row.innerHTML = '<span style="display:inline-flex; align-items:center; gap:8px;">' +
+        flagHTML(c.code, 'sm') + c.name + '</span><small>' + c.code + '</small>';
+      HM.appendChild(row);
+      DIMS.forEach(function (d) {
+        var cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.setAttribute('data-sev', c.sev[d.key]);
+        cell.setAttribute('role', 'cell');
+        cell.innerHTML = SEV_LABEL[c.sev[d.key]] +
+          '<span class="tip">' + c.name + ' · ' + d.label + ': ' + SEV_LABEL[c.sev[d.key]] +
+          '  —  ' + c.anchor + '</span>';
+        HM.appendChild(cell);
+      });
+    });
+  }
+
+  document.querySelectorAll('.hm-toggle button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.hm-toggle button').forEach(function (b) { b.classList.remove('on'); });
+      btn.classList.add('on');
+      sortMode = btn.getAttribute('data-sort');
+      renderHeatmap();
+    });
+  });
+  renderHeatmap();
+
+  /* ================================================================
+   * TIMELINE (SVG)
+   * ================================================================ */
+  (function renderTimeline() {
+    var svg = document.getElementById('tl');
+    if (!svg) return;
+    var W = 1200, H = 320;
+    var padL = 40, padR = 40, padT = 40, padB = 60;
+    var innerW = W - padL - padR;
+    var years = KEY_LAWS.map(function (k) { return k.year; });
+    var minY = Math.min.apply(null, years);
+    var maxY = Math.max.apply(null, years);
+    function xFor(year) {
+      return padL + ((year - minY) / (maxY - minY)) * innerW;
+    }
+    var midY = H / 2;
+
+    var svgNS = 'http://www.w3.org/2000/svg';
+    function el(name, attrs, text) {
+      var e = document.createElementNS(svgNS, name);
+      if (attrs) Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+
+    // Axis
+    svg.appendChild(el('line', { x1: padL, y1: midY, x2: W - padR, y2: midY, class: 'axis' }));
+
+    // Year ticks (every 2 years)
+    for (var y = minY; y <= maxY; y++) {
+      var x = xFor(y);
+      svg.appendChild(el('line', { x1: x, y1: midY - 4, x2: x, y2: midY + 4, class: 'tick' }));
+      if (y % 2 === 0 || y === maxY || y === minY) {
+        svg.appendChild(el('text', { x: x, y: midY + 22, 'text-anchor': 'middle', class: 'year-label' }, "'" + String(y).slice(-2)));
+      }
+    }
+
+    // Country -> color map using severity of the event's source
+    function colorFor(code) {
+      var c = COUNTRIES.find(function (cc) { return cc.code === code; });
+      if (!c) return '#94A3B8';
+      var total = c.sev.data + c.sev.sys + c.sev.entity + c.sev.workload;
+      if (total >= 10) return '#7C2D12';
+      if (total >= 7)  return '#B45309';
+      if (total >= 4)  return '#CA8A04';
+      return '#475569';
+    }
+
+    // Stack events by year (alternate above/below and within stack)
+    var byYear = {};
+    KEY_LAWS.forEach(function (k) {
+      byYear[k.year] = byYear[k.year] || [];
+      byYear[k.year].push(k);
+    });
+
+    Object.keys(byYear).forEach(function (yr) {
+      var evs = byYear[yr];
+      evs.forEach(function (ev, i) {
+        var side = i % 2 === 0 ? -1 : 1; // alternate above / below
+        var stackLevel = Math.floor(i / 2);
+        var offset = 40 + stackLevel * 52;
+        var cx = xFor(ev.year);
+        var cy = midY + side * offset;
+
+        // Connector line
+        svg.appendChild(el('line', {
+          x1: cx, y1: midY,
+          x2: cx, y2: cy,
+          class: 'event-line',
+          stroke: colorFor(ev.code)
+        }));
+
+        // Dot
+        var dot = el('circle', {
+          cx: cx, cy: cy, r: 6,
+          class: 'event-dot',
+          fill: colorFor(ev.code),
+          stroke: '#FFFFFF', 'stroke-width': 2
+        });
+        svg.appendChild(dot);
+
+        // Label (positioned above or below dot)
+        var labelY = cy + (side < 0 ? -12 : 22);
+        var ctryY = cy + (side < 0 ? -26 : 36);
+
+        // Inline flag via foreignObject (16x11 small flag)
+        var fo = el('foreignObject', {
+          x: cx - 8, y: ctryY - (side < 0 ? 10 : 0),
+          width: 16, height: 11
+        });
+        var wrap = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+        wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+        wrap.style.width = '16px';
+        wrap.style.height = '11px';
+        wrap.innerHTML = flagHTML(ev.code, 'sm');
+        fo.appendChild(wrap);
+        svg.appendChild(fo);
+
+        // Country code positioned beside flag
+        var codeX = cx + 12;
+        svg.appendChild(el('text', {
+          x: codeX, y: ctryY + (side < 0 ? -2 : 8),
+          'text-anchor': 'start',
+          class: 'event-ctry'
+        }, ev.code));
+        svg.appendChild(el('text', {
+          x: cx, y: labelY,
+          'text-anchor': 'middle',
+          class: 'event-label'
+        }, ev.label));
+
+        // Accessibility
+        var title = el('title', {}, ev.year + ' · ' + ev.code + ' · ' + ev.label);
+        dot.appendChild(title);
+      });
+    });
+  })();
+
+  /* ================================================================
+   * COMPARISON LAB
+   * ================================================================ */
+  var selected = [];
+  var MAX_COMP = 3;
+
+  var chipsWrap = document.getElementById('compChips');
+  var dimsWrap  = document.getElementById('compDims');
+  var counter   = document.getElementById('compCounter');
+
+  function buildChips() {
+    if (!chipsWrap) return;
+    chipsWrap.innerHTML = '';
+    COUNTRIES.slice().sort(function(a,b){return a.idx-b.idx;}).forEach(function (c) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'comp-chip';
+      b.setAttribute('data-id', c.id);
+      b.innerHTML = flagHTML(c.code, 'sm') + '<span class="dot"></span>' + c.code + ' &nbsp;' + c.name;
+      b.addEventListener('click', function () { toggleCountry(c.id); });
+      chipsWrap.appendChild(b);
+    });
+  }
+
+  function toggleCountry(id) {
+    var i = selected.indexOf(id);
+    if (i >= 0) {
+      selected.splice(i, 1);
+    } else {
+      if (selected.length >= MAX_COMP) return;
+      selected.push(id);
+    }
+    refreshChips();
+    renderComparison();
+  }
+
+  function refreshChips() {
+    if (!chipsWrap) return;
+    var atMax = selected.length >= MAX_COMP;
+    chipsWrap.querySelectorAll('.comp-chip').forEach(function (btn) {
+      var id = btn.getAttribute('data-id');
+      var isOn = selected.indexOf(id) >= 0;
+      btn.classList.toggle('active', isOn);
+      if (atMax && !isOn) {
+        btn.setAttribute('disabled', '');
+      } else {
+        btn.removeAttribute('disabled');
+      }
+    });
+    if (counter) counter.textContent = selected.length + ' / ' + MAX_COMP + ' selected';
+  }
+
+  function renderComparison() {
+    if (!dimsWrap) return;
+    if (selected.length === 0) {
+      dimsWrap.innerHTML = '<div class="comp-empty">Select a jurisdiction above to begin.</div>';
+      return;
+    }
+    var html = '';
+    DIMS.forEach(function (d, di) {
+      html += '<div class="comp-dim">';
+      html += '  <div class="comp-dim-label"><span class="n">' + d.num + '</span>' + d.label + '</div>';
+      html += '  <div class="comp-dim-bars">';
+      selected.forEach(function (cid) {
+        var c = byId[cid];
+        var sev = c.sev[d.key];
+        html += '<div class="comp-bar">';
+        html += '  <span class="comp-bar-ctry">' + c.code + '</span>';
+        html += '  <span class="comp-bar-track"><span class="comp-bar-fill" data-sev="' + sev + '" style="width:' + (sev === 0 ? 8 : sev * 33) + '%"></span></span>';
+        html += '  <span class="comp-bar-sev" data-sev="' + sev + '">' + SEV_LABEL[sev] + '</span>';
+        html += '</div>';
+      });
+      html += '  </div>';
+      html += '</div>';
+    });
+
+    // Anchor instrument row
+    html += '<div class="comp-dim" style="border-top:1px solid var(--rule); padding-top: var(--sp-4);">';
+    html += '  <div class="comp-dim-label"><span class="n">◆</span>Anchor Instrument</div>';
+    html += '  <div class="comp-dim-bars">';
+    selected.forEach(function (cid) {
+      var c = byId[cid];
+      html += '<div style="display:flex; gap:10px; align-items:flex-start;">';
+      html += '<span class="comp-bar-ctry" style="min-width:46px;">' + c.code + '</span>';
+      html += '<span style="font-size:12px; color: var(--ink-soft);">' + c.anchor + '</span>';
+      html += '</div>';
+    });
+    html += '  </div>';
+    html += '</div>';
+
+    dimsWrap.innerHTML = html;
+  }
+
+  buildChips();
+  refreshChips();
+
+  /* ================================================================
+   * Inject flags into static TOC + comparative matrix
+   * ================================================================ */
+  (function injectStaticFlags() {
+    // TOC — prepend flag to each country link (idx 2..11 after atglance)
+    document.querySelectorAll('.toc ul li a').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href) return;
+      var id = href.replace('#', '');
+      var c = byId[id];
+      if (!c) return;
+      if (a.querySelector('.flag')) return;
+      a.insertAdjacentHTML('afterbegin', flagHTML(c.code, 'sm'));
+    });
+
+    // Matrix — prepend flag to each country cell
+    document.querySelectorAll('table.matrix td.country-cell').forEach(function (td) {
+      // td.textContent starts with country name followed by code in <span>
+      var nameText = td.textContent.trim().split(/\s+/);
+      // The span has the country code — use it
+      var codeSpan = td.querySelector('span');
+      if (!codeSpan) return;
+      var code = codeSpan.textContent.trim();
+      if (td.querySelector('.flag')) return;
+      td.insertAdjacentHTML('afterbegin', flagHTML(code));
+    });
+  })();
+
+  /* ================================================================
+   * TOC smooth scroll + active link styling
+   * ================================================================ */
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
       var targetId = this.getAttribute('href');
@@ -2196,8 +3459,7 @@
     });
   });
 
-  // Subtle active-link styling as you scroll
-  var sections = document.querySelectorAll('.country, #matrix');
+  var sections = document.querySelectorAll('.country, #atglance, #matrix, #compare, #flow');
   var links = document.querySelectorAll('.toc a');
   var linkMap = {};
   links.forEach(function (l) { linkMap[l.getAttribute('href').replace('#','')] = l; });
