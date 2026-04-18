@@ -22,6 +22,38 @@
     --moderate: #B45309;
     --light-sev: #CA8A04;
     --none: #475569;
+
+    /* Severity cell colors (heatmap) */
+    --sev-3-bg: #7C2D12;
+    --sev-2-bg: #B45309;
+    --sev-1-bg: #CA8A04;
+    --sev-0-bg: #CBD5E1;
+    --sev-1-fg: #1a1a1a;
+    --sev-0-fg: #334155;
+    --cell-text-hi: #FFFFFF;
+
+    /* Warm tints (tags, flow nodes, matrix hover) */
+    --tint-strict: #FBF2ED;
+    --tint-accent: #FDF3E7;
+    --tint-light: #FEF9E7;
+    --tint-border-warm: #E7D2C7;
+    --t-light-text: #854D0E;
+
+    /* Surface-on-ink text (dark nodes, active chips) */
+    --on-ink: #FFFFFF;
+
+    /* Tooltip */
+    --tip-bg: #0F172A;
+    --tip-fg: #FFFFFF;
+
+    /* Shadows & decorative glow */
+    --shadow-flag-border: rgba(15, 23, 42, 0.14);
+    --shadow-flag-drop: rgba(15, 23, 42, 0.05);
+    --shadow-flag-lg: rgba(15, 23, 42, 0.08);
+    --shadow-heat: rgba(15, 23, 42, 0.22);
+    --shadow-tl: rgba(15, 23, 42, 0.3);
+    --glow: rgba(180, 83, 9, 0.05);
+
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Roboto Mono", monospace;
     --sans: -apple-system, BlinkMacSystemFont, "Inter", "Geist", "Segoe UI", Roboto, sans-serif;
 
@@ -35,6 +67,50 @@
     --sp-16: 64px;
   }
 
+  [data-theme="dark"] {
+    --bg: #0B0F19;
+    --surface: #111726;
+    --surface-sunk: #0E1320;
+    --ink: #F1F5F9;
+    --ink-soft: #CBD5E1;
+    --muted: #8B98AC;
+    --muted-2: #64748B;
+    --rule: #1E2638;
+    --rule-strong: #2D3A52;
+    --accent: #F59E0B;
+    --accent-soft: #3A2913;
+    --strict: #F87171;
+    --moderate: #FB923C;
+    --light-sev: #FACC15;
+    --none: #94A3B8;
+
+    --sev-3-bg: #9B2C1B;
+    --sev-2-bg: #C2650B;
+    --sev-1-bg: #B88906;
+    --sev-0-bg: #2D3A52;
+    --sev-1-fg: #0B0F19;
+    --sev-0-fg: #CBD5E1;
+    --cell-text-hi: #0B0F19;
+
+    --tint-strict: #2E1A16;
+    --tint-accent: #2E1F0D;
+    --tint-light: #2A230B;
+    --tint-border-warm: #4C321C;
+    --t-light-text: #FACC15;
+
+    --on-ink: #0B0F19;
+
+    --tip-bg: #F1F5F9;
+    --tip-fg: #0B0F19;
+
+    --shadow-flag-border: rgba(0, 0, 0, 0.55);
+    --shadow-flag-drop: rgba(0, 0, 0, 0.45);
+    --shadow-flag-lg: rgba(0, 0, 0, 0.5);
+    --shadow-heat: rgba(0, 0, 0, 0.65);
+    --shadow-tl: rgba(0, 0, 0, 0.55);
+    --glow: rgba(245, 158, 11, 0.08);
+  }
+
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -46,6 +122,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    transition: background 220ms ease, color 220ms ease;
   }
 
   a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-strong); transition: border-color 160ms ease, color 160ms ease; }
@@ -60,7 +137,7 @@
     border-bottom: 1px solid var(--rule);
     padding: var(--sp-16) 0 var(--sp-12);
     background:
-      radial-gradient(ellipse at 80% -20%, rgba(180, 83, 9, 0.05), transparent 50%),
+      radial-gradient(ellipse at 80% -20%, var(--glow), transparent 50%),
       var(--bg);
   }
   .eyebrow {
@@ -122,9 +199,38 @@
   }
   .toc-inner {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     gap: var(--sp-8);
     align-items: center;
+  }
+
+  /* ---------- Theme toggle ---------- */
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    padding: 6px 10px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+    border-radius: 2px;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-toggle svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .theme-toggle .lbl { display: inline-block; }
+  .theme-toggle .icon-sun { display: none; }
+  .theme-toggle .icon-moon { display: inline-block; }
+  [data-theme="dark"] .theme-toggle .icon-sun { display: inline-block; }
+  [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+  @media (max-width: 640px) {
+    .theme-toggle .lbl { display: none; }
   }
   .toc-label {
     font-family: var(--mono);
@@ -270,8 +376,8 @@
     vertical-align: middle;
     background: var(--surface);
   }
-  .tag.hot { color: var(--strict); border-color: #E7D2C7; background: #FBF2ED; }
-  .tag.flux { color: var(--accent); border-color: #E7D2C7; background: var(--accent-soft); }
+  .tag.hot { color: var(--strict); border-color: var(--tint-border-warm); background: var(--tint-strict); }
+  .tag.flux { color: var(--accent); border-color: var(--tint-border-warm); background: var(--accent-soft); }
 
   /* ---------- Architectural Implications Callout ---------- */
   .implications {
@@ -387,8 +493,8 @@
     display: inline-block;
     width: 22px;
     height: 15px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--shadow-flag-border);
+    box-shadow: 0 1px 2px var(--shadow-flag-drop);
     vertical-align: middle;
     flex-shrink: 0;
     overflow: hidden;
@@ -396,7 +502,7 @@
   }
   .flag svg { display: block; width: 100%; height: 100%; }
   .flag.sm { width: 16px; height: 11px; }
-  .flag.lg { width: 48px; height: 32px; border-width: 1px; box-shadow: 0 2px 4px rgba(15,23,42,0.08); }
+  .flag.lg { width: 48px; height: 32px; border-width: 1px; box-shadow: 0 2px 4px var(--shadow-flag-lg); }
 
   /* Country head — flag + text layout */
   .country-head > div:first-child {
@@ -527,14 +633,14 @@
     transition: transform 180ms ease, box-shadow 180ms ease, z-index 0s 180ms;
     justify-content: flex-start;
   }
-  .hm .cell[data-sev="3"] { background: #7C2D12; }
-  .hm .cell[data-sev="2"] { background: #B45309; }
-  .hm .cell[data-sev="1"] { background: #CA8A04; color: #1a1a1a; }
-  .hm .cell[data-sev="0"] { background: #CBD5E1; color: #334155; }
+  .hm .cell[data-sev="3"] { background: var(--sev-3-bg); color: var(--cell-text-hi); }
+  .hm .cell[data-sev="2"] { background: var(--sev-2-bg); color: var(--cell-text-hi); }
+  .hm .cell[data-sev="1"] { background: var(--sev-1-bg); color: var(--sev-1-fg); }
+  .hm .cell[data-sev="0"] { background: var(--sev-0-bg); color: var(--sev-0-fg); }
   .hm .cell:hover {
     transform: scale(1.08);
     z-index: 4;
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.22);
+    box-shadow: 0 10px 26px var(--shadow-heat);
     transition: transform 180ms ease, box-shadow 180ms ease, z-index 0s 0s;
   }
   .hm .cell .tip {
@@ -542,8 +648,8 @@
     bottom: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%);
-    background: var(--ink);
-    color: #FFFFFF;
+    background: var(--tip-bg);
+    color: var(--tip-fg);
     padding: 6px 10px;
     font-family: var(--sans);
     font-size: 11px;
@@ -564,7 +670,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 5px solid transparent;
-    border-top-color: var(--ink);
+    border-top-color: var(--tip-bg);
   }
   .hm .cell:hover .tip { opacity: 1; }
 
@@ -607,10 +713,10 @@
     display: inline-block;
     width: 14px; height: 10px;
   }
-  .hm-legend i[data-sev="3"] { background: #7C2D12; }
-  .hm-legend i[data-sev="2"] { background: #B45309; }
-  .hm-legend i[data-sev="1"] { background: #CA8A04; }
-  .hm-legend i[data-sev="0"] { background: #CBD5E1; }
+  .hm-legend i[data-sev="3"] { background: var(--sev-3-bg); }
+  .hm-legend i[data-sev="2"] { background: var(--sev-2-bg); }
+  .hm-legend i[data-sev="1"] { background: var(--sev-1-bg); }
+  .hm-legend i[data-sev="0"] { background: var(--sev-0-bg); }
 
   /* ---------- Timeline ---------- */
   .tl-wrap { padding: var(--sp-6) var(--sp-8) var(--sp-8); }
@@ -628,7 +734,7 @@
     transition: r 160ms ease, filter 160ms ease;
     cursor: pointer;
   }
-  .tl-svg .event-dot:hover { filter: drop-shadow(0 3px 8px rgba(15,23,42,0.3)); }
+  .tl-svg .event-dot:hover { filter: drop-shadow(0 3px 8px var(--shadow-tl)); }
   .tl-svg .event-line { stroke-width: 1; opacity: 0.5; }
   .tl-svg .event-label {
     font-family: var(--sans);
@@ -772,16 +878,16 @@
   }
   .flow-svg .f-node { fill: var(--surface); stroke: var(--rule-strong); stroke-width: 1.25; }
   .flow-svg .f-node.start, .flow-svg .f-node.end { fill: var(--ink); stroke: var(--ink); }
-  .flow-svg .f-node.decision { fill: #FDF3E7; stroke: var(--accent); stroke-width: 1.5; }
-  .flow-svg .f-node.t-strict { fill: #FBF2ED; stroke: var(--strict); stroke-width: 1.5; }
-  .flow-svg .f-node.t-moderate { fill: #FDF3E7; stroke: var(--moderate); stroke-width: 1.5; }
-  .flow-svg .f-node.t-light { fill: #FEF9E7; stroke: var(--light-sev); stroke-width: 1.5; }
+  .flow-svg .f-node.decision { fill: var(--tint-accent); stroke: var(--accent); stroke-width: 1.5; }
+  .flow-svg .f-node.t-strict { fill: var(--tint-strict); stroke: var(--strict); stroke-width: 1.5; }
+  .flow-svg .f-node.t-moderate { fill: var(--tint-accent); stroke: var(--moderate); stroke-width: 1.5; }
+  .flow-svg .f-node.t-light { fill: var(--tint-light); stroke: var(--light-sev); stroke-width: 1.5; }
   .flow-svg .f-text { font-family: var(--sans); font-size: 12px; fill: var(--ink); }
   .flow-svg .f-text.cap { font-size: 10px; font-family: var(--mono); letter-spacing: 0.14em; text-transform: uppercase; fill: var(--muted); }
-  .flow-svg .f-text.end-txt, .flow-svg .f-text.start-txt { fill: #FFFFFF; font-weight: 600; }
+  .flow-svg .f-text.end-txt, .flow-svg .f-text.start-txt { fill: var(--on-ink); font-weight: 600; }
   .flow-svg .f-text.t-strict { fill: var(--strict); font-weight: 600; }
   .flow-svg .f-text.t-moderate { fill: var(--moderate); font-weight: 600; }
-  .flow-svg .f-text.t-light { fill: #854D0E; font-weight: 600; }
+  .flow-svg .f-text.t-light { fill: var(--t-light-text); font-weight: 600; }
   .flow-svg .f-edge { stroke: var(--rule-strong); stroke-width: 1.5; fill: none; }
   .flow-svg .f-edge-label {
     font-family: var(--mono);
@@ -813,15 +919,176 @@
     width: 14px; height: 10px;
     border: 1px solid var(--rule-strong);
   }
-  .flow-legend i.decision { background: #FDF3E7; border-color: var(--accent); }
+  .flow-legend i.decision { background: var(--tint-accent); border-color: var(--accent); }
   .flow-legend i.action { background: var(--surface); }
-  .flow-legend i.strict { background: #FBF2ED; border-color: var(--strict); }
-  .flow-legend i.moderate { background: #FDF3E7; border-color: var(--moderate); }
-  .flow-legend i.light { background: #FEF9E7; border-color: var(--light-sev); }
+  .flow-legend i.strict { background: var(--tint-strict); border-color: var(--strict); }
+  .flow-legend i.moderate { background: var(--tint-accent); border-color: var(--moderate); }
+  .flow-legend i.light { background: var(--tint-light); border-color: var(--light-sev); }
 
   /* Make matrix rows interactive (sortable severity matrix) */
   table.matrix tbody tr { transition: background 160ms; }
-  table.matrix tbody tr:hover { background: #FDF3E7; }
+  table.matrix tbody tr:hover { background: var(--tint-accent); }
+
+  /* ---------- Glossary ---------- */
+  #glossary .gloss-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--sp-6);
+  }
+  #glossary .gloss-filter button {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 6px 11px;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 160ms ease;
+  }
+  #glossary .gloss-filter button:hover { border-color: var(--ink); color: var(--ink); }
+  #glossary .gloss-filter button.on {
+    background: var(--ink);
+    color: var(--on-ink);
+    border-color: var(--ink);
+  }
+  .gloss-search {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-8);
+    padding: 10px var(--sp-4);
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    max-width: 520px;
+  }
+  .gloss-search svg {
+    width: 14px; height: 14px;
+    stroke: var(--muted);
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+  .gloss-search input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 2px 0;
+  }
+  .gloss-search input::placeholder { color: var(--muted-2); }
+  .gloss-group { margin-bottom: var(--sp-12); }
+  .gloss-group:last-of-type { margin-bottom: 0; }
+  .gloss-group-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-4);
+    padding-bottom: var(--sp-3);
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: var(--sp-6);
+  }
+  .gloss-group-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .gloss-group-title {
+    font-size: clamp(18px, 2vw, 22px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .gloss-group-count {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .gloss-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  @media (min-width: 720px) {
+    .gloss-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1080px) {
+    .gloss-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .gloss-item {
+    background: var(--surface);
+    padding: var(--sp-4) var(--sp-6);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background 160ms ease;
+  }
+  .gloss-item:hover { background: var(--tint-accent); }
+  .gloss-item[hidden] { display: none; }
+  .gloss-item .gloss-top {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+  }
+  .gloss-abbr {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .gloss-jur {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border: 1px solid var(--rule);
+    background: var(--surface-sunk);
+  }
+  .gloss-name {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .gloss-def {
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 2px 0 0;
+  }
+  .gloss-empty {
+    padding: var(--sp-12) 0;
+    text-align: center;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    display: none;
+  }
+  .gloss-empty.show { display: block; }
+  mark.gloss-hit {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0 2px;
+    border-radius: 1px;
+  }
 
   /* ---------- Responsive tweaks ---------- */
   @media (max-width: 780px) {
@@ -883,7 +1150,13 @@
       <li><a href="#matrix">↳ Matrix</a></li>
       <li><a href="#compare">↳ Comparison Lab</a></li>
       <li><a href="#flow">↳ Decision Flow</a></li>
+      <li><a href="#glossary">↳ Glossary</a></li>
     </ul>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle theme">
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.93 19.07 1.41-1.41"/><path d="m17.66 6.34 1.41-1.41"/></svg>
+      <span class="lbl" data-lbl-dark="Dark" data-lbl-light="Light">Dark</span>
+    </button>
   </div>
 </nav>
 
@@ -2876,6 +3149,334 @@
     </div>
   </section>
 
+  <!-- ============================================================= -->
+  <!-- GLOSSARY                                                       -->
+  <!-- ============================================================= -->
+  <section id="glossary" class="vs">
+    <div class="eyebrow">Reference</div>
+    <h2>Glossary</h2>
+    <p class="sub">
+      Abbreviations, instruments, and architectural terms used throughout this brief. Filter by category or search by abbreviation, full name, or jurisdiction.
+    </p>
+
+    <div class="gloss-filter" role="tablist" aria-label="Glossary category filter">
+      <button type="button" class="on" data-cat="all">All</button>
+      <button type="button" data-cat="regulator">Regulators</button>
+      <button type="button" data-cat="instrument">Instruments &amp; Standards</button>
+      <button type="button" data-cat="concept">Architectural Concepts</button>
+    </div>
+
+    <label class="gloss-search" for="glossSearch">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="glossSearch" type="search" placeholder="Search terms — e.g. MAS, localization, TRM…" autocomplete="off" />
+    </label>
+
+    <div class="gloss-empty" id="glossEmpty">No matching terms</div>
+
+    <div class="gloss-group" data-group="regulator">
+      <header class="gloss-group-head">
+        <span class="gloss-group-num">A.01</span>
+        <h3 class="gloss-group-title">Regulators &amp; Supervisory Bodies</h3>
+        <span class="gloss-group-count"></span>
+      </header>
+      <div class="gloss-grid">
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">BI</span><span class="gloss-jur">Indonesia</span></div>
+          <div class="gloss-name">Bank Indonesia</div>
+          <p class="gloss-def">Central bank; owns payment-system oversight and the PBI instruments that mandate onshore processing for domestic payments.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">OJK</span><span class="gloss-jur">Indonesia</span></div>
+          <div class="gloss-name">Otoritas Jasa Keuangan</div>
+          <p class="gloss-def">Integrated financial-services authority; regulates banking, capital markets, and non-bank institutions. Issues POJK circulars governing IT risk and data.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">RBI</span><span class="gloss-jur">India</span></div>
+          <div class="gloss-name">Reserve Bank of India</div>
+          <p class="gloss-def">Central bank and banking regulator; author of the 2018 Payment Data Localization circular and the IT Outsourcing Master Direction (2023).</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">FSC</span><span class="gloss-jur">Taiwan</span></div>
+          <div class="gloss-name">Financial Supervisory Commission</div>
+          <p class="gloss-def">Unified financial regulator; issues Outsourcing Regulations that govern cloud use and cross-border processing for licensed institutions.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">FISC</span><span class="gloss-jur">Japan</span></div>
+          <div class="gloss-name">Center for Financial Industry Information Systems</div>
+          <p class="gloss-def">Industry body that publishes the FISC Security Guidelines — the de facto baseline for control selection in Japanese financial IT.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">CAC</span><span class="gloss-jur">China</span></div>
+          <div class="gloss-name">Cyberspace Administration of China</div>
+          <p class="gloss-def">Cyberspace regulator; administers cross-border data transfer assessments under CSL / DSL / PIPL and operates the security review regime.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">HKMA</span><span class="gloss-jur">Hong Kong</span></div>
+          <div class="gloss-name">Hong Kong Monetary Authority</div>
+          <p class="gloss-def">Central-banking authority; supervises authorized institutions and issues SA-2 (outsourcing), TM-E-1 (cloud) and the Cyber Fortification Initiative.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">MAS</span><span class="gloss-jur">Singapore</span></div>
+          <div class="gloss-name">Monetary Authority of Singapore</div>
+          <p class="gloss-def">Integrated central bank and regulator; publishes the TRM Guidelines and Notices 655 / 644 that shape deployment topology and cyber hygiene.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">BNM</span><span class="gloss-jur">Malaysia</span></div>
+          <div class="gloss-name">Bank Negara Malaysia</div>
+          <p class="gloss-def">Central bank; issues RMiT (Risk Management in Technology) and the Outsourcing Policy Document binding on financial institutions.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">APRA</span><span class="gloss-jur">Australia</span></div>
+          <div class="gloss-name">Australian Prudential Regulation Authority</div>
+          <p class="gloss-def">Prudential regulator for ADIs, insurers, and super funds; issues the CPS prudential standards including CPS 234 and CPS 230.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">BOT</span><span class="gloss-jur">Thailand</span></div>
+          <div class="gloss-name">Bank of Thailand</div>
+          <p class="gloss-def">Central bank; publishes IT Risk and Outsourcing Notifications that govern cloud adoption and outsourced processing by financial institutions.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="regulator">
+          <div class="gloss-top"><span class="gloss-abbr">PDPC</span><span class="gloss-jur">SG · TH · MY</span></div>
+          <div class="gloss-name">Personal Data Protection Commission</div>
+          <p class="gloss-def">Data-protection authority across several APAC jurisdictions (title used in SG, TH, MY); enforces PDPA obligations and breach notification.</p>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="gloss-group" data-group="instrument">
+      <header class="gloss-group-head">
+        <span class="gloss-group-num">A.02</span>
+        <h3 class="gloss-group-title">Legal Instruments &amp; Prudential Standards</h3>
+        <span class="gloss-group-count"></span>
+      </header>
+      <div class="gloss-grid">
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">PBI</span><span class="gloss-jur">Indonesia</span></div>
+          <div class="gloss-name">Peraturan Bank Indonesia</div>
+          <p class="gloss-def">Binding regulation issued by BI. PBI 19/14/PBI/2017 is the payment-system localization instrument.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">POJK</span><span class="gloss-jur">Indonesia</span></div>
+          <div class="gloss-name">Peraturan OJK</div>
+          <p class="gloss-def">Binding circular from OJK. POJK 11/2022 sets IT risk and data-management requirements for commercial banks.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">GR 71/2019</span><span class="gloss-jur">Indonesia</span></div>
+          <div class="gloss-name">Government Regulation 71 of 2019</div>
+          <p class="gloss-def">Defines Electronic System Operator (ESO) scope; splits public-sector ESOs (onshore-only) from private-sector ESOs (cross-border permitted).</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">Master Direction</span><span class="gloss-jur">India</span></div>
+          <div class="gloss-name">RBI Master Direction</div>
+          <p class="gloss-def">Consolidated binding guidance from RBI. The IT Outsourcing and IT Governance Master Directions (2023) frame cloud and third-party use.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">DPDP Act</span><span class="gloss-jur">India</span></div>
+          <div class="gloss-name">Digital Personal Data Protection Act 2023</div>
+          <p class="gloss-def">India's omnibus personal-data law; introduces consent-based processing and negative-list cross-border transfer mechanics.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">APPI</span><span class="gloss-jur">Japan</span></div>
+          <div class="gloss-name">Act on Protection of Personal Information</div>
+          <p class="gloss-def">Japan's principal privacy statute; imposes consent and adequacy tests for cross-border transfers of personal data.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">CSL</span><span class="gloss-jur">China</span></div>
+          <div class="gloss-name">Cybersecurity Law (2017)</div>
+          <p class="gloss-def">Foundational PRC cyber statute; introduces CIIO (Critical Information Infrastructure Operator) designation and onshore-storage mandate.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">DSL</span><span class="gloss-jur">China</span></div>
+          <div class="gloss-name">Data Security Law (2021)</div>
+          <p class="gloss-def">Classifies data by importance (General / Important / Core) and regulates transfer and processing accordingly.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">PIPL</span><span class="gloss-jur">China</span></div>
+          <div class="gloss-name">Personal Information Protection Law (2021)</div>
+          <p class="gloss-def">GDPR-style personal-data statute; cross-border transfer requires standard contract, CAC assessment, or certification.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">MLPS 2.0</span><span class="gloss-jur">China</span></div>
+          <div class="gloss-name">Multi-Level Protection Scheme 2.0</div>
+          <p class="gloss-def">Graded cybersecurity classification (Level 1–5) with prescriptive control baselines; financial workloads typically rated Level 3+.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">SA-2</span><span class="gloss-jur">Hong Kong</span></div>
+          <div class="gloss-name">HKMA Supervisory Policy Manual SA-2</div>
+          <p class="gloss-def">Outsourcing policy for authorized institutions; governs cloud adoption, exit planning, and supervisory-access rights.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">TM-E-1</span><span class="gloss-jur">Hong Kong</span></div>
+          <div class="gloss-name">HKMA TM-E-1 Risk Management of E-Banking</div>
+          <p class="gloss-def">Supervisory guidance on internet/mobile-banking risk management; referenced for cloud-resilience and customer-data handling.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">CFI 2.0</span><span class="gloss-jur">Hong Kong</span></div>
+          <div class="gloss-name">Cyber Fortification Initiative 2.0</div>
+          <p class="gloss-def">HKMA's tiered cyber-resilience framework (C-RAF / iCAST); rolling out through 2026 with sharper threat-intel requirements.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">TRM</span><span class="gloss-jur">Singapore</span></div>
+          <div class="gloss-name">MAS Technology Risk Management Guidelines</div>
+          <p class="gloss-def">Principles-based IT-risk framework binding on MAS-regulated entities; anchors cyber hygiene, resilience, and third-party controls.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">Notice 655 / 644</span><span class="gloss-jur">Singapore</span></div>
+          <div class="gloss-name">MAS Notices on Cyber Hygiene / Tech Risk</div>
+          <p class="gloss-def">Binding notices prescribing baseline cyber-hygiene controls and reporting obligations for banks and payment-services providers.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">RMiT</span><span class="gloss-jur">Malaysia</span></div>
+          <div class="gloss-name">Risk Management in Technology</div>
+          <p class="gloss-def">BNM policy document setting prescriptive IT-risk, cloud-adoption, and outsourcing requirements for financial institutions.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">CPS 234</span><span class="gloss-jur">Australia</span></div>
+          <div class="gloss-name">APRA Prudential Standard CPS 234 — Information Security</div>
+          <p class="gloss-def">Binding information-security standard; mandates board accountability, control testing, and incident-notification obligations.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">CPS 230</span><span class="gloss-jur">Australia</span></div>
+          <div class="gloss-name">APRA Prudential Standard CPS 230 — Operational Risk</div>
+          <p class="gloss-def">Operational-risk, business-continuity, and service-provider management standard; in force from July 2025.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">SOCI</span><span class="gloss-jur">Australia</span></div>
+          <div class="gloss-name">Security of Critical Infrastructure Act</div>
+          <p class="gloss-def">Critical-infrastructure regime; imposes asset-register, risk-management, and mandatory cyber-incident reporting for designated sectors.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">CDR</span><span class="gloss-jur">Australia</span></div>
+          <div class="gloss-name">Consumer Data Right</div>
+          <p class="gloss-def">Economy-wide data-portability regime; accredits recipients and governs open-banking data exchange.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="instrument">
+          <div class="gloss-top"><span class="gloss-abbr">PDPA</span><span class="gloss-jur">SG · TH · MY</span></div>
+          <div class="gloss-name">Personal Data Protection Act</div>
+          <p class="gloss-def">Personal-data protection statute used (with local variations) in Singapore, Thailand, and Malaysia; governs consent, purpose, and transfer.</p>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="gloss-group" data-group="concept">
+      <header class="gloss-group-head">
+        <span class="gloss-group-num">A.03</span>
+        <h3 class="gloss-group-title">Architectural &amp; Security Concepts</h3>
+        <span class="gloss-group-count"></span>
+      </header>
+      <div class="gloss-grid">
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">Data Localization</span></div>
+          <div class="gloss-name">Onshore storage mandate</div>
+          <p class="gloss-def">A binding requirement to store specified data within a jurisdiction's physical borders — often extended to processing and backup copies.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">Data Residency</span></div>
+          <div class="gloss-name">Contractual location commitment</div>
+          <p class="gloss-def">A softer, often commercial notion than localization: a commitment that data will be held in a chosen region, typically not statute-driven.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">Workload Isolation</span></div>
+          <div class="gloss-name">Tenant / network / compute separation</div>
+          <p class="gloss-def">Segregation of regulated workloads from other tenants — at the network, compute, identity, or key-management layer — per regulator expectation.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">Legal Entity</span></div>
+          <div class="gloss-name">In-country incorporated operator</div>
+          <p class="gloss-def">A local, regulator-licensed entity that must itself operate the system — constraining both control plane and contractual structure.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">Sovereign Cloud</span></div>
+          <div class="gloss-name">Jurisdictionally-bounded cloud region</div>
+          <p class="gloss-def">A cloud region operated under local law with staffing, key-custody, and administrative access confined to the jurisdiction.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">HSM</span></div>
+          <div class="gloss-name">Hardware Security Module</div>
+          <p class="gloss-def">Tamper-resistant cryptographic device that generates, stores, and operates on keys; mandated by multiple regulators for card-network and PII workloads.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">BYOK / HYOK</span></div>
+          <div class="gloss-name">Bring / Hold Your Own Key</div>
+          <p class="gloss-def">Customer-controlled key material in cloud KMS; HYOK keeps the key outside the provider's boundary entirely, often in a customer-operated HSM.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">SM Crypto</span><span class="gloss-jur">China</span></div>
+          <div class="gloss-name">Shangmi national cryptographic standards</div>
+          <p class="gloss-def">PRC national algorithms (SM2 asymmetric, SM3 hash, SM4 block cipher) required for regulated financial systems in mainland China.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">BCP / DR</span></div>
+          <div class="gloss-name">Business Continuity / Disaster Recovery</div>
+          <p class="gloss-def">Planning and infrastructure for continued operation through disruption; most APAC regulators prescribe RTO / RPO targets and drill cadence.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">CIIO</span><span class="gloss-jur">China</span></div>
+          <div class="gloss-name">Critical Information Infrastructure Operator</div>
+          <p class="gloss-def">CSL-designation that triggers onshore storage, security review of foreign products, and heightened supervisory obligations.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">Supervisory Access</span></div>
+          <div class="gloss-name">Regulator inspection rights</div>
+          <p class="gloss-def">Contractual and technical provisions giving regulators on-site and remote access to outsourced systems and logs; required in most APAC outsourcing rules.</p>
+        </article>
+
+        <article class="gloss-item" data-cat="concept">
+          <div class="gloss-top"><span class="gloss-abbr">Exit Plan</span></div>
+          <div class="gloss-name">Third-party unwind blueprint</div>
+          <p class="gloss-def">Documented plan to transition off a critical outsourced service inside a defined window; commonly required for material cloud arrangements.</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
   <footer>
     <div class="row">
       <p>© 2026 · APAC FinTech Architecture Research Brief · Prepared for internal solutions-architecture use.</p>
@@ -3493,7 +4094,7 @@
     });
   });
 
-  var sections = document.querySelectorAll('.country, #atglance, #matrix, #compare, #flow');
+  var sections = document.querySelectorAll('.country, #atglance, #matrix, #compare, #flow, #glossary');
   var links = document.querySelectorAll('.toc a');
   var linkMap = {};
   links.forEach(function (l) { linkMap[l.getAttribute('href').replace('#','')] = l; });
@@ -3510,6 +4111,129 @@
   }
   window.addEventListener('scroll', setActive, { passive: true });
   setActive();
+
+  /* ================================================================
+   * Theme toggle — persist to localStorage, honor prefers-color-scheme
+   * ================================================================ */
+  (function themeToggle() {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    var lblEl = btn.querySelector('.lbl');
+
+    function apply(theme) {
+      if (theme === 'dark') {
+        root.setAttribute('data-theme', 'dark');
+        btn.setAttribute('aria-pressed', 'true');
+        if (lblEl) lblEl.textContent = lblEl.getAttribute('data-lbl-light');
+      } else {
+        root.removeAttribute('data-theme');
+        btn.setAttribute('aria-pressed', 'false');
+        if (lblEl) lblEl.textContent = lblEl.getAttribute('data-lbl-dark');
+      }
+    }
+
+    var stored = null;
+    try { stored = localStorage.getItem('apac-theme'); } catch (e) {}
+    var initial = stored || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    apply(initial);
+
+    btn.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      apply(next);
+      try { localStorage.setItem('apac-theme', next); } catch (e) {}
+    });
+  })();
+
+  /* ================================================================
+   * Glossary — category filter + live search
+   * ================================================================ */
+  (function glossary() {
+    var section = document.getElementById('glossary');
+    if (!section) return;
+    var filterBtns = section.querySelectorAll('.gloss-filter button');
+    var items = section.querySelectorAll('.gloss-item');
+    var groups = section.querySelectorAll('.gloss-group');
+    var searchInput = document.getElementById('glossSearch');
+    var emptyEl = document.getElementById('glossEmpty');
+    var state = { cat: 'all', q: '' };
+
+    function cacheText() {
+      items.forEach(function (it) {
+        if (it.dataset.text) return;
+        it.dataset.text = (it.textContent || '').toLowerCase();
+        it.dataset.origHTML = it.innerHTML;
+      });
+    }
+    cacheText();
+
+    function escapeHTML(s) {
+      return s.replace(/[&<>"']/g, function (c) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+      });
+    }
+
+    function highlight(it, q) {
+      if (!q) { it.innerHTML = it.dataset.origHTML; return; }
+      it.innerHTML = it.dataset.origHTML;
+      var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+      var walker = document.createTreeWalker(it, NodeFilter.SHOW_TEXT, null);
+      var toReplace = [];
+      var n;
+      while ((n = walker.nextNode())) {
+        if (re.test(n.nodeValue)) toReplace.push(n);
+      }
+      toReplace.forEach(function (node) {
+        var span = document.createElement('span');
+        span.innerHTML = escapeHTML(node.nodeValue).replace(re, '<mark class="gloss-hit">$1</mark>');
+        node.parentNode.replaceChild(span, node);
+      });
+    }
+
+    function apply() {
+      var q = state.q.trim().toLowerCase();
+      var totalVisible = 0;
+      var perGroup = {};
+      items.forEach(function (it) {
+        var matchCat = state.cat === 'all' || it.dataset.cat === state.cat;
+        var matchQ = !q || it.dataset.text.indexOf(q) !== -1;
+        var show = matchCat && matchQ;
+        it.hidden = !show;
+        if (show) {
+          totalVisible++;
+          var g = it.closest('.gloss-group').dataset.group;
+          perGroup[g] = (perGroup[g] || 0) + 1;
+          highlight(it, q);
+        } else {
+          it.innerHTML = it.dataset.origHTML;
+        }
+      });
+      groups.forEach(function (g) {
+        var key = g.dataset.group;
+        var n = perGroup[key] || 0;
+        g.hidden = n === 0;
+        var counter = g.querySelector('.gloss-group-count');
+        if (counter) counter.textContent = n + ' term' + (n === 1 ? '' : 's');
+      });
+      emptyEl.classList.toggle('show', totalVisible === 0);
+    }
+
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        filterBtns.forEach(function (b) { b.classList.remove('on'); });
+        btn.classList.add('on');
+        state.cat = btn.getAttribute('data-cat');
+        apply();
+      });
+    });
+
+    searchInput.addEventListener('input', function () {
+      state.q = this.value;
+      apply();
+    });
+
+    apply();
+  })();
 </script>
 </body>
 </html>
