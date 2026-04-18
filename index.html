@@ -175,6 +175,17 @@
   /* ---------- Layout ---------- */
   .shell { max-width: 1240px; margin: 0 auto; padding: 0 var(--sp-8); }
 
+  /* Two-column layout: TOC sidebar + main (desktop) / stacked (mobile) */
+  .layout { display: block; }
+  @media (min-width: 960px) {
+    .layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: var(--sp-12);
+      align-items: start;
+    }
+  }
+
   /* ---------- Masthead ---------- */
   .masthead {
     border-bottom: 1px solid var(--rule);
@@ -231,20 +242,45 @@
   .meta-row b { color: var(--ink); font-weight: 600; }
 
   /* ---------- TOC ---------- */
+  /* Mobile (default): horizontal sticky bar at top of the layout */
   .toc {
     border-bottom: 1px solid var(--rule);
-    padding: var(--sp-6) 0;
+    padding: var(--sp-4) 0;
     background: var(--surface);
     position: sticky;
     top: 0;
     z-index: 5;
     backdrop-filter: saturate(120%);
+    margin-bottom: var(--sp-6);
   }
   .toc-inner {
     display: grid;
     grid-template-columns: auto 1fr auto;
-    gap: var(--sp-8);
+    gap: var(--sp-6);
     align-items: center;
+  }
+
+  /* Desktop: vertical left sidebar that stays in view while scrolling */
+  @media (min-width: 960px) {
+    .toc {
+      border-bottom: 0;
+      border-right: 1px solid var(--rule);
+      background: transparent;
+      backdrop-filter: none;
+      padding: var(--sp-8) var(--sp-6) var(--sp-8) 0;
+      top: var(--sp-4);
+      align-self: start;
+      max-height: calc(100vh - var(--sp-8));
+      overflow-y: auto;
+      margin-bottom: 0;
+      scrollbar-width: thin;
+    }
+    .toc-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sp-4);
+    }
   }
 
   /* ---------- Theme toggle ---------- */
@@ -282,7 +318,19 @@
     text-transform: uppercase;
     color: var(--muted);
   }
-  .toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); }
+  /* Mobile TOC list: horizontal scroll */
+  .toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--sp-2);
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .toc ul li { flex: 0 0 auto; }
   .toc a {
     font-size: 13px;
     border-bottom: 0;
@@ -293,8 +341,49 @@
     background: var(--surface);
     transition: all 160ms ease;
     font-variant-numeric: tabular-nums;
+    display: inline-block;
+    white-space: nowrap;
   }
   .toc a:hover { border-color: var(--accent); color: var(--accent); }
+  .toc a[aria-current="true"],
+  .toc a.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  /* Desktop TOC list: vertical stack, full-width items */
+  @media (min-width: 960px) {
+    .toc ul {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      overflow-x: visible;
+      gap: var(--sp-1);
+    }
+    .toc ul li { flex: 1 1 auto; width: 100%; }
+    .toc a {
+      display: block;
+      width: 100%;
+      padding: 6px 10px;
+      border-color: transparent;
+      background: transparent;
+      border-left: 2px solid transparent;
+      border-radius: 0;
+    }
+    .toc a:hover {
+      border-color: transparent;
+      border-left-color: var(--rule-strong);
+      background: var(--surface-sunk);
+      color: var(--ink);
+    }
+    .toc a[aria-current="true"],
+    .toc a.active {
+      background: var(--accent-soft);
+      border-color: transparent;
+      border-left-color: var(--accent);
+      color: var(--accent);
+    }
+  }
 
   /* ---------- Intro / methodology ---------- */
   .intro {
@@ -1322,10 +1411,12 @@
   </div>
 </header>
 
-<!-- ============== TOC ============== -->
-<nav class="toc" aria-label="Jump to country">
-  <div class="shell toc-inner">
-    <span class="toc-label">Jump to</span>
+<div class="shell layout">
+
+<!-- ============== TOC — left sidebar on desktop, sticky top bar on mobile ============== -->
+<nav class="toc" aria-label="Section navigation">
+  <div class="toc-inner">
+    <span class="toc-label">Contents</span>
     <ul>
       <li><a href="#atglance">↳ At a Glance</a></li>
       <li><a href="#indonesia">01 · Indonesia</a></li>
@@ -1351,7 +1442,7 @@
   </div>
 </nav>
 
-<main id="main" class="shell">
+<main id="main">
 
   <!-- ============== INTRO ============== -->
   <section class="intro">
@@ -3704,6 +3795,8 @@
 
 </main>
 
+</div><!-- /.layout -->
+
 <script>
   /* ================================================================
    * DATA MODEL — severity scores and legislative timeline
@@ -4298,6 +4391,10 @@
   /* ================================================================
    * TOC smooth scroll + active link styling
    * ================================================================ */
+  function tocIsSidebar() {
+    return window.matchMedia('(min-width: 960px)').matches;
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
       var targetId = this.getAttribute('href');
@@ -4305,8 +4402,11 @@
       var target = document.querySelector(targetId);
       if (!target) return;
       e.preventDefault();
-      var toc = document.querySelector('.toc');
-      var offset = toc ? toc.offsetHeight + 12 : 0;
+      var offset = 12;
+      if (!tocIsSidebar()) {
+        var toc = document.querySelector('.toc');
+        offset = (toc ? toc.offsetHeight : 0) + 12;
+      }
       var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
       window.scrollTo({ top: top, behavior: 'smooth' });
     });
@@ -4321,10 +4421,13 @@
     var y = window.scrollY + 140;
     var current = null;
     sections.forEach(function (s) { if (s.offsetTop <= y) current = s.id; });
-    links.forEach(function (l) { l.style.borderColor = ''; l.style.color = ''; });
+    links.forEach(function (l) {
+      l.classList.remove('active');
+      l.removeAttribute('aria-current');
+    });
     if (current && linkMap[current]) {
-      linkMap[current].style.borderColor = 'var(--accent)';
-      linkMap[current].style.color = 'var(--accent)';
+      linkMap[current].classList.add('active');
+      linkMap[current].setAttribute('aria-current', 'true');
     }
   }
   window.addEventListener('scroll', setActive, { passive: true });
