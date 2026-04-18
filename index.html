@@ -3,8 +3,51 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>APAC FinTech Technology Architecture Design Constraints — Research Brief</title>
-<meta name="description" content="A senior solutions-architect brief covering regulatory, data-localization, workload-isolation, and cybersecurity constraints across 10 APAC jurisdictions." />
+<title>APAC FinTech Architecture Constraints — 10 Jurisdictions</title>
+<meta name="description" content="Architect-grade reference on data residency, workload isolation, and cyber rules across 10 APAC jurisdictions — with binding citations." />
+<meta name="author" content="James Buckett" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://apac-regulations.example.com/" />
+
+<!-- Open Graph -->
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="APAC FinTech Architecture Constraints — 10 Jurisdictions" />
+<meta property="og:description" content="Architect-grade reference on data residency, workload isolation, and cyber rules across 10 APAC jurisdictions." />
+<meta property="og:url"         content="https://apac-regulations.example.com/" />
+<meta property="og:site_name"   content="APAC FinTech Architecture Brief" />
+<meta property="og:locale"      content="en_US" />
+
+<!-- Twitter -->
+<meta name="twitter:card"        content="summary_large_image" />
+<meta name="twitter:title"       content="APAC FinTech Architecture Constraints — 10 Jurisdictions" />
+<meta name="twitter:description" content="Architect-grade reference on data residency, workload isolation, and cyber rules across 10 APAC jurisdictions." />
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "APAC FinTech Architecture Constraints — 10 Jurisdictions",
+  "datePublished": "2026-04-17",
+  "dateModified": "2026-04-19",
+  "author": { "@type": "Person", "name": "James Buckett" },
+  "publisher": { "@type": "Organization", "name": "APAC FinTech Architecture Brief" },
+  "inLanguage": "en",
+  "about": [
+    "financial services regulation",
+    "data localization",
+    "workload isolation",
+    "APAC",
+    "cybersecurity",
+    "cloud compliance"
+  ],
+  "audience": {
+    "@type": "Audience",
+    "audienceType": "Solutions and Security Architects"
+  },
+  "proficiencyLevel": "Expert"
+}
+</script>
 <style>
   :root {
     --bg: #F7F7F5;
@@ -349,6 +392,8 @@
     color: var(--muted);
     text-transform: uppercase;
     padding-top: 2px;
+    margin: 0;
+    font-weight: 400;
   }
   .dim-label .num {
     display: inline-block;
@@ -394,7 +439,7 @@
     width: 3px; height: 100%;
     background: var(--accent);
   }
-  .implications h4 {
+  .implications h3 {
     font-size: 12px;
     font-family: var(--mono);
     letter-spacing: 0.16em;
@@ -1099,6 +1144,144 @@
     .comp-bar { grid-template-columns: 40px 1fr 70px; }
   }
 
+  /* ---------- Skip-to-content (keyboard users) ---------- */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .skip-link:focus {
+    left: var(--sp-4);
+    top: var(--sp-4);
+    width: auto;
+    height: auto;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--ink);
+    color: var(--on-ink);
+    z-index: 1000;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+  }
+
+  /* ---------- Byline & reviewed date ---------- */
+  .byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-6);
+    align-items: baseline;
+    padding-top: var(--sp-4);
+    margin-top: var(--sp-4);
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .byline b { color: var(--ink); font-weight: 600; }
+  .byline a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 150ms ease; }
+  .byline a:hover, .byline a:focus-visible { border-color: var(--accent); }
+
+  /* ---------- Risk-reversal banner ---------- */
+  .disclaimer {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: flex-start;
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.55;
+    margin-bottom: var(--sp-8);
+  }
+  .disclaimer svg {
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    color: var(--accent);
+  }
+
+  /* ---------- Regional Takeaways (above heatmap) ---------- */
+  .takeaways {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+    padding: var(--sp-6) var(--sp-8);
+    margin-bottom: var(--sp-8);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+  }
+  @media (min-width: 880px) {
+    .takeaways { grid-template-columns: repeat(2, 1fr); column-gap: var(--sp-12); }
+  }
+  .takeaways h3 {
+    grid-column: 1 / -1;
+    margin: 0 0 var(--sp-2);
+    font-size: 12px;
+    font-family: var(--mono);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .takeaways ul { margin: 0; padding-left: 20px; color: var(--ink-soft); }
+  .takeaways li { margin-bottom: var(--sp-3); line-height: 1.55; }
+  .takeaways li:last-child { margin-bottom: 0; }
+  .takeaways b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- CTA card (end of decision flow) ---------- */
+  .cta {
+    margin-top: var(--sp-8);
+    padding: var(--sp-8);
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+  @media (min-width: 720px) {
+    .cta { flex-direction: row; align-items: center; justify-content: space-between; }
+  }
+  .cta-text { max-width: 56ch; }
+  .cta-text h3 {
+    margin: 0 0 var(--sp-2);
+    font-size: 15px;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .cta-text p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+  .cta-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-6);
+    background: var(--ink);
+    color: var(--on-ink);
+    border: 1px solid var(--ink);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  .cta-btn:hover, .cta-btn:focus-visible {
+    background: var(--accent);
+    border-color: var(--accent);
+    outline: none;
+  }
+  .cta-btn svg { width: 14px; height: 14px; }
+
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
@@ -1113,20 +1296,28 @@
 </head>
 <body>
 
+<a class="skip-link" href="#main">Skip to content</a>
+
 <!-- ============== MASTHEAD ============== -->
 <header class="masthead">
   <div class="shell">
     <div class="eyebrow">Research Brief &middot; Solutions Architecture &middot; APAC</div>
-    <h1 class="title">Technology Architecture Design Constraints Across APAC Financial Services</h1>
+    <h1 class="title">APAC FinTech Architecture — 10 Jurisdictions, 12 Constraints Each</h1>
     <p class="lede">
-      A senior architect's reference on the regulatory, data-residency, workload-isolation and cyber-resilience mandates that shape the physical and logical design of financial systems across ten APAC jurisdictions. Written for architects who must translate regulator circulars into concrete deployment topology.
+      A working reference for architects who must turn regulator circulars into deployment decisions. For each of 10 APAC jurisdictions: data residency, workload isolation, cross-border transfer rules, and the binding instrument behind each &mdash; plus five architectural implications you can apply this week.
     </p>
     <div class="meta-row">
-      <span><b>Prepared</b> &nbsp; 17 Apr 2026</span>
+      <span><b>Prepared</b> &nbsp; <time datetime="2026-04-17">17 Apr 2026</time></span>
+      <span><b>Last reviewed</b> &nbsp; <time datetime="2026-04-19">19 Apr 2026</time></span>
       <span><b>Scope</b> &nbsp; Banking, Payments, Securities</span>
       <span><b>Jurisdictions</b> &nbsp; 10</span>
       <span><b>Dimensions</b> &nbsp; 12 per country</span>
       <span><b>Intended audience</b> &nbsp; Solutions &amp; Security Architects</span>
+    </div>
+    <div class="byline">
+      <span><b>Author</b> &nbsp; James Buckett &middot; Solutions Architect</span>
+      <span><b>Contact</b> &nbsp; <a href="mailto:james.buckett@gmail.com?subject=APAC%20FinTech%20Architecture%20Brief">james.buckett@gmail.com</a></span>
+      <span><b>Not legal advice</b> &nbsp; Verify currency with qualified counsel before design commitment.</span>
     </div>
   </div>
 </header>
@@ -1160,10 +1351,14 @@
   </div>
 </nav>
 
-<main class="shell">
+<main id="main" class="shell">
 
   <!-- ============== INTRO ============== -->
   <section class="intro">
+    <p class="disclaimer" role="note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span><b>Reference only.</b> This brief distils binding instruments into architectural implications. Regulation evolves quickly &mdash; verify any rule with qualified counsel before design commitment.</span>
+    </p>
     <div class="intro-grid">
       <div>
         <h2>Method &amp; Framing</h2>
@@ -1201,6 +1396,18 @@
     <p class="sub">
       A color-coded view of binding severity across the four dimensions that most directly shape deployment topology. Toggle columns to reframe the heatmap. Hover any cell for the governing instrument.
     </p>
+
+    <aside class="takeaways" aria-label="Regional takeaways">
+      <h3>Regional takeaways &mdash; 30-second read</h3>
+      <ul>
+        <li><b>Strictest tier.</b> China is strict on all four dimensions; India is strict on data and process but moderate on entity and workload.</li>
+        <li><b>Lightest tier.</b> Australia, Singapore and Japan are permissive on data and entity rules &mdash; but all three still hold a moderate floor on workload isolation.</li>
+      </ul>
+      <ul>
+        <li><b>Hidden trap.</b> Hong Kong and Thailand rate "Light" on data but "Moderate" on workload isolation &mdash; easy to under-scope segregation in an otherwise flexible jurisdiction.</li>
+        <li><b>Most active flux (2024&ndash;2026).</b> India DPDP rules, Indonesia PDP phase-in, Australia CPS 230 in-force, Hong Kong CFI 2.0 rollout.</li>
+      </ul>
+    </aside>
 
     <div class="vcard" style="margin-bottom: var(--sp-8);">
       <div class="vcard-head">
@@ -1248,7 +1455,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Otoritas Jasa Keuangan (OJK)</b> — prudential &amp; conduct regulator for banking, insurance, capital markets. <a href="https://www.ojk.go.id" rel="noopener">ojk.go.id</a></li>
@@ -1260,7 +1467,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li><b>BI Regulation 19/14/PBI/2017</b> — payment transaction data must be <b>processed and stored within Indonesia</b>. A hard onshore mandate for payment-system operators.</li>
@@ -1272,7 +1479,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>Domestic payment routing via <b>GPN (Gerbang Pembayaran Nasional)</b> — switching, clearing &amp; settlement for domestic card/QRIS transactions must occur onshore.</li>
@@ -1284,7 +1491,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign banks typically operate through a locally-incorporated subsidiary (PT) or a licensed branch (KCBA); fintech / payment institutions must be Indonesian legal entities under BI licensing.</li>
@@ -1295,7 +1502,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li>Multi-tenant public cloud generally permitted; logical tenancy isolation acceptable for customer PII when supported by controls.</li>
@@ -1306,7 +1513,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li><b>PDP Law 27/2022</b> — requires adequate protection abroad <em>or</em> binding contractual safeguards <em>or</em> data-subject consent for outbound transfer.</li>
@@ -1317,7 +1524,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>OJK POJK 11/POJK.03/2022</b> on IT risk management for commercial banks — aligned with ISO 27001 and NIST CSF principles.</li>
@@ -1328,7 +1535,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li><b>SNAP (Standar Nasional Open API Pembayaran)</b> — BI 2021 standard; mandatory for payment-service providers with phased onboarding.</li>
@@ -1339,7 +1546,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>Public cloud permitted; material cloud outsourcing requires OJK notification under POJK 11/2022 and exit-plan / data-portability documentation.</li>
@@ -1350,7 +1557,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>AML/CFT obligations per Law 8/2010 and PPATK reporting; transaction monitoring with automated STR/CTR generation.</li>
@@ -1361,7 +1568,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum; TLS 1.3 preferred. BI payment rails prescribe specific cipher suites and key-rotation intervals.</li>
@@ -1372,7 +1579,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>UU ITE</b> (Electronic Information &amp; Transactions) — Law 11/2008, amended by Law 19/2016 and Law 1/2024</li>
@@ -1385,7 +1592,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Deploy payment-system workloads into an onshore Indonesian region with dedicated VPC/VNet and onshore HSM; maintain primary &amp; DR inside Indonesia.</li>
         <li>For non-payment workloads (CRM, analytics, collaboration), cross-border processing is allowable with OJK notification — design a clean data-classification boundary so only non-sensitive / non-payment data exits.</li>
@@ -1410,7 +1617,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Reserve Bank of India (RBI)</b> — banks, payment systems, NBFCs. <a href="https://www.rbi.org.in" rel="noopener">rbi.org.in</a></li>
@@ -1423,7 +1630,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li><b>RBI Circular DPSS.CO.OD.No. 2785/06.08.005/2017-18 (6 Apr 2018)</b> — <b>payment system data must be stored only in India</b>. Full strict localization for all PSOs, including foreign schemes.</li>
@@ -1434,7 +1641,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>Payment authorization, clearing, settlement for domestic card/UPI/IMPS transactions must execute in India.</li>
@@ -1446,7 +1653,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign banks operate as branches (with RBI-imposed capital and governance conditions) or wholly-owned subsidiaries (WOS).</li>
@@ -1458,7 +1665,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li><b>RBI Master Direction on IT Governance, Risk, Controls &amp; Assurance Practices, 2023</b> — requires segregation of production / non-production, privileged-access management, and workload classification.</li>
@@ -1469,7 +1676,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li><b>DPDP Act 2023</b> — transfer permitted to any jurisdiction not on a negative list (to be notified). <span class="tag flux">Rules pending</span></li>
@@ -1480,7 +1687,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>RBI Cyber Security Framework in Banks (2016)</b> + <b>Master Direction on Digital Payment Security Controls (2021)</b>.</li>
@@ -1492,7 +1699,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li><b>Account Aggregator (AA) Framework</b> — RBI-regulated NBFC-AA model for consent-driven data sharing (ReBIT specs).</li>
@@ -1504,7 +1711,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li><b>RBI draft Framework for Adoption of Cloud Services (2024)</b> — establishes a common empanelment, exit, and concentration-risk regime. <span class="tag flux">Emerging</span></li>
@@ -1515,7 +1722,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>PMLA obligations; FIU-IND reporting for STR/CTR.</li>
@@ -1527,7 +1734,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum; TLS 1.3 encouraged; approved cipher suites per RBI Master Direction on Digital Payment Security Controls.</li>
@@ -1539,7 +1746,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Information Technology Act, 2000</b> (with SPDI Rules 2011)</li>
@@ -1551,7 +1758,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>All payment-system data — at rest, in processing, in backup — resides in India; deploy CBS, payment switch, and HSM in an Indian region with in-country DR.</li>
         <li>Design a strict data-classification and tokenisation layer so that overseas analytics or group platforms see only non-PSD, de-identified records.</li>
@@ -1576,7 +1783,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Financial Supervisory Commission (FSC)</b> — integrated financial regulator. <a href="https://www.fsc.gov.tw" rel="noopener">fsc.gov.tw</a></li>
@@ -1588,7 +1795,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li>No general data-localization statute. Supervisory expectation: <b>core banking and customer master data maintained onshore</b> with regulator-access guarantees.</li>
@@ -1599,7 +1806,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>Core banking platform and accounting ledger must reside onshore with onshore DR (FSC practice).</li>
@@ -1610,7 +1817,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign banks operate as branches or subsidiaries; subsidiary structure required for certain regulated activities (securities, insurance).</li>
@@ -1620,7 +1827,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li>Multi-tenant public cloud allowed for non-core workloads; <b>critical workloads</b> (core banking, AML, card issuance) expected on dedicated / logically isolated environments.</li>
@@ -1631,7 +1838,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li>PDPA Article 21 allows FSC / sector regulator to restrict cross-border transfer. Individual consent + purpose limitation otherwise.</li>
@@ -1641,7 +1848,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>FSC Regulations Governing Standards for Information System &amp; Security Management of Electronic Banking</b> — prescribes controls, logging, and incident reporting.</li>
@@ -1653,7 +1860,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li><b>FSC Open Banking</b> — voluntary 3-phase framework operated by Financial Information Service Co.: (1) public information, (2) customer information with consent, (3) transaction information.</li>
@@ -1663,7 +1870,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>FSC approval required for <b>material cloud outsourcing</b> (Regulations Governing Outsourcing, amended Jul 2019; further clarifications 2022).</li>
@@ -1674,7 +1881,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>AML/CFT under Money Laundering Control Act; MJIB (Investigation Bureau) as FIU.</li>
@@ -1685,7 +1892,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum; TLS 1.3 encouraged; RSA-2048 / ECDSA-P256 for signatures.</li>
@@ -1697,7 +1904,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Banking Act</b> Art. 45-1 (outsourcing), <b>PDPA</b> (1995, amended 2023)</li>
@@ -1709,7 +1916,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Keep core banking, ledger, and customer master onshore with Taiwan-based DR; retain auditable FSC access rights for any CSP-hosted component.</li>
         <li>Obtain FSC pre-approval for material cloud outsourcing; deliver reversibility and exit design at point of approval, not after.</li>
@@ -1734,7 +1941,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Financial Services Agency (FSA)</b> — integrated regulator. <a href="https://www.fsa.go.jp" rel="noopener">fsa.go.jp</a></li>
@@ -1746,7 +1953,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li>No statutory data-localization mandate.</li>
@@ -1757,7 +1964,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>BOJ-NET, Zengin System (domestic RTGS / ACH) require on-soil connectivity and operation by Japanese-licensed operators.</li>
@@ -1768,7 +1975,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign banks commonly branch; subsidiaries required for certain securities/insurance business.</li>
@@ -1779,7 +1986,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li>Multi-tenant public cloud broadly permitted; <b>FISC Security Guidelines</b> drive logical isolation, encryption-at-rest/in-transit, and key separation.</li>
@@ -1790,7 +1997,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li><b>APPI</b> (amended 2022) — cross-border transfer requires (a) consent with information, (b) equivalent-standards country (adequacy), or (c) safeguards contract.</li>
@@ -1801,7 +2008,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>FISC Security Guidelines for Financial Information Systems</b> (10th edition series) — de facto standard used at examination.</li>
@@ -1813,7 +2020,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li>Open-API framework under amended Banking Act (2017) — banks publish APIs under contractual agreements with Electronic Payment Service Providers.</li>
@@ -1824,7 +2031,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>Cloud permitted; FSA notification for material outsourcing with exit/reversibility plans.</li>
@@ -1835,7 +2042,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>Act on Prevention of Transfer of Criminal Proceeds (APTCP) — AML obligations.</li>
@@ -1847,7 +2054,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum; TLS 1.3 increasingly required. CRYPTREC list informs approved algorithms.</li>
@@ -1859,7 +2066,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Banking Act</b> (Act No. 59 of 1981, amended)</li>
@@ -1871,7 +2078,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Anchor core banking, BOJ-NET and Zengin connectivity in on-soil regions; align DR to a second Japanese region for seismic diversity.</li>
         <li>Use CSPs and controls mapped to FISC Security Guidelines — treat FISC alignment as the lingua franca of FSA examination.</li>
@@ -1896,7 +2103,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>National Financial Regulatory Administration (NFRA)</b> — prudential supervision (formed 2023, absorbing CBIRC). <a href="https://www.nfra.gov.cn" rel="noopener">nfra.gov.cn</a></li>
@@ -1909,7 +2116,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li><b>Cybersecurity Law (CSL 2017)</b> — Critical Information Infrastructure Operators (CIIOs) must store personal information &amp; important data <b>within China</b>.</li>
@@ -1921,7 +2128,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>Payment processing, clearing, settlement for domestic transactions must occur onshore — CNAPS (HVPS/BEPS), NUCC, UnionPay, NetsUnion.</li>
@@ -1932,7 +2139,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign banks operate through branches or locally-incorporated subsidiaries; securities / fund management usually requires JV or WFOE with specific licences.</li>
@@ -1943,7 +2150,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li><b>Multi-Level Protection Scheme 2.0 (MLPS 2.0)</b> — systems graded 1–5; financial core systems typically <b>Level 3 or higher</b>, requiring dedicated or tightly-isolated environments.</li>
@@ -1954,7 +2161,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li>PIPL cross-border transfer route requires one of: <b>CAC security assessment</b>, <b>Standard Contract filing</b>, or <b>Certification</b>.</li>
@@ -1965,7 +2172,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li>MLPS 2.0 (GB/T 22239-2019 series), CIIP Regulation, <b>JR/T 0071</b> financial-industry information-security standards.</li>
@@ -1976,7 +2183,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li>No unified mandatory open-banking scheme; bilateral API arrangements and PBOC-supervised standards dominate.</li>
@@ -1987,7 +2194,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign CSPs operate only through licensed domestic partners; data sovereignty absolute for CIIOs.</li>
@@ -1998,7 +2205,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>AML under Anti-Money-Laundering Law (2007, amended 2024); PBOC's CAMLMAC reporting.</li>
@@ -2009,7 +2216,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li><b>Commercial Cryptography Law (2020)</b> — mandates state-approved <b>SM2 / SM3 / SM4 / SM9</b> algorithms for cryptographic protection of important data.</li>
@@ -2021,7 +2228,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Cybersecurity Law (CSL), 2017</b> · <b>Data Security Law (DSL), 2021</b> · <b>Personal Information Protection Law (PIPL), 2021</b></li>
@@ -2033,7 +2240,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Stand up a fully onshore stack: licensed domestic CSP or JV hyperscaler, SM-family cryptography, SCA-certified HSMs, onshore operations and SRE teams — assume no foreign administrative access.</li>
         <li>Design for MLPS Level-3+ controls from day one — rated-system graded testing, dedicated security-operations capability, and approval from MPS for system go-live.</li>
@@ -2058,7 +2265,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Hong Kong Monetary Authority (HKMA)</b> — banking &amp; payment systems. <a href="https://www.hkma.gov.hk" rel="noopener">hkma.gov.hk</a></li>
@@ -2070,7 +2277,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li>No statutory data localization. HKMA requires records to be <b>"readily available" in Hong Kong</b> and accessible to the regulator on demand.</li>
@@ -2081,7 +2288,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>HKD RTGS (CHATS), FPS (Faster Payment System) operate onshore under HKMA/HKICL; participants require direct onshore connectivity.</li>
@@ -2092,7 +2299,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Locally-incorporated banks or branches both permitted; SFC-licensed corporations for securities business.</li>
@@ -2103,7 +2310,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li>Multi-tenant public cloud broadly accepted; HKMA Circular on cloud computing (<b>Aug 2022</b>) formalises cloud usage expectations and introduces the <b>Shared Assessments Programme</b> for CSP due-diligence reuse.</li>
@@ -2114,7 +2321,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li>PDPO permits cross-border transfer with data-subject consent and appropriate safeguards; Section 33 not yet in force.</li>
@@ -2124,7 +2331,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>HKMA CFI 2.0 (Cybersecurity Fortification Initiative 2.0)</b> — three pillars: <b>C-RAF</b> assessment, <b>iCAST</b> intelligence-led attack simulation, <b>CIR</b> professional development.</li>
@@ -2135,7 +2342,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li><b>HKMA Open API Framework</b> — four-phase plan (Phase I product info → Phase IV transactional); <b>Phase IV</b> implementation ongoing.</li>
@@ -2146,7 +2353,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>Material outsourcing requires HKMA non-objection under SA-2; explicit cloud risk-management expectations.</li>
@@ -2157,7 +2364,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>AMLO — AML/CTF obligations; JFIU for STR.</li>
@@ -2168,7 +2375,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum; TLS 1.3 preferred; approved cipher-suites per HKMA TM-E-1 / industry practice.</li>
@@ -2179,7 +2386,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Banking Ordinance (Cap. 155)</b> · <b>Personal Data (Privacy) Ordinance (PDPO)</b></li>
@@ -2191,7 +2398,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Use onshore HK regions for customer data, CHATS/FPS connectivity, and the primary system of record; regional DR permitted but demonstrate recovery and regulator access.</li>
         <li>Design to C-RAF and iCAST from outset — threat modelling, red-team readiness, and SOC maturity should be part of the target-state architecture, not a compliance afterthought.</li>
@@ -2216,7 +2423,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Monetary Authority of Singapore (MAS)</b> — integrated regulator and central bank. <a href="https://www.mas.gov.sg" rel="noopener">mas.gov.sg</a></li>
@@ -2227,7 +2434,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li>No statutory data-localization mandate. MAS "permits" cross-border processing provided <b>timely regulator access to records in Singapore</b> is preserved (MAS Notice 658 and related outsourcing notices).</li>
@@ -2237,7 +2444,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>Domestic rails — MEPS+ (SGD RTGS), FAST, PayNow — onshore under MAS/ABS governance.</li>
@@ -2248,7 +2455,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Full banks, wholesale banks, DPT licensees — each with specific licensing. DPT under <b>Payment Services Act 2019</b>.</li>
@@ -2258,7 +2465,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li>Multi-tenant public cloud fully accepted; <b>MAS TRM 2021</b> articulates expected controls (IAM, segregation, encryption, logging).</li>
@@ -2269,7 +2476,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li><b>PDPA 2012</b> (amended 2020) — transfer permitted with consent and comparable protection (e.g., contractual safeguards); ASEAN Model Contractual Clauses increasingly used.</li>
@@ -2280,7 +2487,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>MAS Technology Risk Management Guidelines (Jan 2021)</b> — the anchor document for FI technology / cyber practice.</li>
@@ -2292,7 +2499,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li><b>SGFinDex</b> — consent-based financial data exchange across participating banks, CPF, HDB, IRAS, insurers, via Singpass authentication.</li>
@@ -2303,7 +2510,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>CSP selection under MAS outsourcing notices; explicit <b>regulator access, audit, confidentiality, and exit</b> clauses required.</li>
@@ -2313,7 +2520,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>AML/CFT under MAS Notice 626 (Banks) and equivalents for other FIs; STRO as FIU.</li>
@@ -2324,7 +2531,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum; TLS 1.3 encouraged; MAS TRM prescribes strong cipher suites and PFS.</li>
@@ -2335,7 +2542,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Banking Act 1970</b> · <b>Payment Services Act 2019</b> · <b>Securities &amp; Futures Act</b></li>
@@ -2347,7 +2554,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Architect freely across regions under MAS principle-based guidance — but <b>evidence timely regulator access</b> to records held in Singapore, with contractual and technical guarantees.</li>
         <li>Bake MAS TRM 2021 and Notice 655 controls into CI/CD pipelines — hardening baselines, patch SLAs, MFA, privileged-access management.</li>
@@ -2372,7 +2579,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Bank Negara Malaysia (BNM)</b> — banking, payment systems, Islamic finance. <a href="https://www.bnm.gov.my" rel="noopener">bnm.gov.my</a></li>
@@ -2384,7 +2591,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li><b>BNM Policy Document on Outsourcing (2019)</b> requires BNM concurrence for storage of <b>customer information outside Malaysia</b> for material outsourcing.</li>
@@ -2395,7 +2602,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>Domestic payment rails — <b>RENTAS</b> (RTGS), <b>DuitNow</b> (retail instant) — operated onshore by PayNet under BNM oversight.</li>
@@ -2406,7 +2613,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign banks operate as locally-incorporated subsidiaries under FSA 2013 / IFSA 2013.</li>
@@ -2417,7 +2624,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li><b>BNM RMiT (Risk Management in Technology, 2020)</b> — segregation of production/non-production, dedicated environments for critical systems, strong IAM &amp; privileged-access.</li>
@@ -2427,7 +2634,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li>PDPA 2010 Section 129 (post-2024 amendment): transfer permitted to jurisdictions with comparable protection or on consent / specified grounds.</li>
@@ -2437,7 +2644,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>BNM RMiT</b> — comprehensive technology-risk standard: cyber, cloud, outsourcing, data-leakage, resilience.</li>
@@ -2449,7 +2656,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li>BNM "Open Data &amp; Application Programming Interfaces" policy (2018) — phased open APIs, initially for product information; PayNet API platform delivers DuitNow-based payment APIs.</li>
@@ -2459,7 +2666,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>BNM concurrence for <b>material cloud outsourcing</b>; assessment covers CSP resilience, data access, regulator audit-rights, exit.</li>
@@ -2469,7 +2676,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>AML/CFT under AMLA 2001; BNM <b>AML/CFT and TFS for FIs (AML/CFT Policy)</b>; FIED as FIU.</li>
@@ -2480,7 +2687,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum (TLS 1.3 moving); AES-256, RSA-2048 / ECDSA-P256 standard.</li>
@@ -2491,7 +2698,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Financial Services Act 2013 (FSA)</b> · <b>Islamic Financial Services Act 2013 (IFSA)</b></li>
@@ -2503,7 +2710,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Default to onshore hosting of customer data and critical systems; treat cross-border processing as a BNM-approval exercise with documented risk-assessment and exit plan.</li>
         <li>Build to BNM RMiT as the baseline controls catalogue; map architecture patterns directly to RMiT appendices for audit defensibility.</li>
@@ -2528,7 +2735,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Australian Prudential Regulation Authority (APRA)</b>. <a href="https://www.apra.gov.au" rel="noopener">apra.gov.au</a></li>
@@ -2540,7 +2747,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li>No statutory data-localization mandate. APRA expects records to be accessible and entities to retain effective control.</li>
@@ -2551,7 +2758,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>Domestic rails — RITS (RTGS), NPP (New Payments Platform), BECS — operated onshore by RBA / NPPA.</li>
@@ -2562,7 +2769,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign ADIs operate as branches (FABs) or locally-incorporated subsidiaries; subsidiary required for retail deposit-taking.</li>
@@ -2573,7 +2780,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li><b>CPS 234 (Information Security, 2019)</b> — controls proportionate to threat and criticality; segregation of environments expected.</li>
@@ -2584,7 +2791,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li>APP 8 under Privacy Act 1988; disclosing entity remains accountable unless safe-harbour conditions met.</li>
@@ -2595,7 +2802,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>APRA CPS 234 (Information Security, 2019)</b> — legally binding prudential standard.</li>
@@ -2607,7 +2814,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li><b>Consumer Data Right (CDR)</b> — legislated in 2019, operational across banking, energy, and expanding. FAPI 1.0 Advanced profile, mTLS, PAR.</li>
@@ -2618,7 +2825,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>APRA permits cloud; under CPS 230, material service providers must be registered, tolerances set, and providers regularly tested for exit/substitution.</li>
@@ -2628,7 +2835,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>AML/CTF under AML/CTF Act 2006; AUSTRAC regulations; transaction monitoring and TTR / SMR obligations.</li>
@@ -2639,7 +2846,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum; TLS 1.3 strongly encouraged; ACSC-approved cryptographic algorithms (AACP) guide protection of classified data and inform financial baselines.</li>
@@ -2650,7 +2857,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Banking Act 1959</b> · <b>Privacy Act 1988</b> (tranche-1 reforms 2024)</li>
@@ -2662,7 +2869,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Adopt CPS 230 tolerances as a first-class architectural input — per-service impact tolerances drive capacity, resilience, and dependency design, not just BCM plans.</li>
         <li>Build to CPS 234 control objectives and map to APRA-expected evidence; use this mapping as the source of truth for SOC, testing, and assurance scopes.</li>
@@ -2687,7 +2894,7 @@
     </header>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">01</span>Regulatory Bodies</div>
+      <h3 class="dim-label"><span class="num">01</span>Regulatory Bodies</h3>
       <div class="dim-body">
         <ul>
           <li><b>Bank of Thailand (BOT)</b> — banks, payment systems. <a href="https://www.bot.or.th" rel="noopener">bot.or.th</a></li>
@@ -2700,7 +2907,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">02</span>Data Localization</div>
+      <h3 class="dim-label"><span class="num">02</span>Data Localization</h3>
       <div class="dim-body">
         <ul>
           <li>No general data-localization law; BOT can impose onshore conditions in licensing.</li>
@@ -2711,7 +2918,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">03</span>System &amp; Process Localization</div>
+      <h3 class="dim-label"><span class="num">03</span>System &amp; Process Localization</h3>
       <div class="dim-body">
         <ul>
           <li>Domestic rails — <b>BAHTNET</b> (RTGS), <b>PromptPay</b> (instant retail), <b>ICAS</b> (cheque) — operated onshore.</li>
@@ -2722,7 +2929,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">04</span>Legal Entity Segregation</div>
+      <h3 class="dim-label"><span class="num">04</span>Legal Entity Segregation</h3>
       <div class="dim-body">
         <ul>
           <li>Foreign banks commonly operate as branches / subsidiaries under <b>Financial Institutions Business Act 2008</b>.</li>
@@ -2733,7 +2940,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</div>
+      <h3 class="dim-label"><span class="num">05</span>Workload Isolation &amp; Placement</h3>
       <div class="dim-body">
         <ul>
           <li>Multi-tenant public cloud accepted under BOT IT risk rules; material workloads (core banking, payment switching) expected on isolated / dedicated environments.</li>
@@ -2743,7 +2950,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">06</span>Cross-Border Data Flow</div>
+      <h3 class="dim-label"><span class="num">06</span>Cross-Border Data Flow</h3>
       <div class="dim-body">
         <ul>
           <li>PDPA cross-border: permitted to jurisdictions with adequate protection (PDPC determines), or under binding corporate rules / standard contractual terms / consent.</li>
@@ -2753,7 +2960,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">07</span>Cybersecurity Standards</div>
+      <h3 class="dim-label"><span class="num">07</span>Cybersecurity Standards</h3>
       <div class="dim-body">
         <ul>
           <li><b>BOT Notification on IT Risk Management</b> and the <b>Cyber Resilience Assessment Framework</b> for FIs.</li>
@@ -2765,7 +2972,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">08</span>API &amp; Open Banking</div>
+      <h3 class="dim-label"><span class="num">08</span>API &amp; Open Banking</h3>
       <div class="dim-body">
         <ul>
           <li>BOT is advancing an open-data / open-banking framework under the <b>Financial Landscape Consultation (2022 and subsequent directions)</b>.</li>
@@ -2776,7 +2983,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</div>
+      <h3 class="dim-label"><span class="num">09</span>Cloud &amp; Infrastructure</h3>
       <div class="dim-body">
         <ul>
           <li>Cloud outsourcing under BOT IT Outsourcing Notification; material outsourcing requires notification / non-objection with demonstrable controls.</li>
@@ -2786,7 +2993,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</div>
+      <h3 class="dim-label"><span class="num">10</span>Licensing &amp; Compliance Tech</h3>
       <div class="dim-body">
         <ul>
           <li>AML/CFT under AMLA 1999; AMLO as FIU.</li>
@@ -2797,7 +3004,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</div>
+      <h3 class="dim-label"><span class="num">11</span>Encryption &amp; Authentication</h3>
       <div class="dim-body">
         <ul>
           <li>TLS 1.2 minimum; TLS 1.3 encouraged; standard cipher suites.</li>
@@ -2808,7 +3015,7 @@
     </div>
 
     <div class="dim">
-      <div class="dim-label"><span class="num">12</span>Key Legislation</div>
+      <h3 class="dim-label"><span class="num">12</span>Key Legislation</h3>
       <div class="dim-body">
         <ul>
           <li><b>Financial Institutions Business Act 2008</b></li>
@@ -2820,7 +3027,7 @@
     </div>
 
     <div class="implications">
-      <h4>Architectural Implications</h4>
+      <h3>Architectural Implications</h3>
       <ol>
         <li>Keep BAHTNET / PromptPay / ICAS connectivity and their supporting workloads onshore; use Thailand CSP regions as they mature to align customer-data primary copies.</li>
         <li>Integrate NDID as the default eKYC and step-up identity evidence provider; design identity journeys to degrade gracefully where NDID is unavailable.</li>
@@ -3147,6 +3354,17 @@
         <span style="margin-left:auto;">Arrows read top-down · dashed = overlay</span>
       </div>
     </div>
+
+    <aside class="cta" aria-label="Contact the author">
+      <div class="cta-text">
+        <h3>Found a rule change, an ambiguity, or a correction?</h3>
+        <p>This brief is actively maintained. If you spot an out-of-date circular or a jurisdiction I should add, I want to hear from you.</p>
+      </div>
+      <a class="cta-btn" href="mailto:james.buckett@gmail.com?subject=APAC%20FinTech%20Architecture%20Brief%20%E2%80%94%20feedback">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Email the author
+      </a>
+    </aside>
   </section>
 
   <!-- ============================================================= -->
@@ -3479,8 +3697,8 @@
 
   <footer>
     <div class="row">
-      <p>© 2026 · APAC FinTech Architecture Research Brief · Prepared for internal solutions-architecture use.</p>
-      <p>Sources: regulator websites and circulars listed per-country. Verify currency of any rule before design commitment.</p>
+      <p>© 2026 &middot; APAC FinTech Architecture Research Brief &middot; Shared as a practitioner reference. Not legal advice.</p>
+      <p>Sources: regulator websites and circulars listed per-country. Verify currency of any rule before design commitment. Questions or corrections: <a href="mailto:james.buckett@gmail.com">james.buckett@gmail.com</a>.</p>
     </div>
   </footer>
 
