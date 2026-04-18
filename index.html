@@ -3281,160 +3281,145 @@
         <span class="comp-counter">Binding · APAC · 2026</span>
       </div>
       <div class="flow-wrap">
-        <svg class="flow-svg" viewBox="0 0 1120 820" preserveAspectRatio="xMidYMid meet" aria-label="Workload placement decision tree">
+        <svg class="flow-svg" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid meet" aria-label="Workload placement decision tree">
           <defs>
             <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
               <path d="M 0 0 L 10 5 L 0 10 z" fill="#CBD5E1"/>
             </marker>
           </defs>
 
-          <!-- START -->
+          <!-- ========= START ========= -->
           <g>
-            <rect class="f-node start" x="460" y="10" width="200" height="46" rx="2" />
-            <text class="f-text start-txt" x="560" y="38" text-anchor="middle">New workload in APAC jurisdiction</text>
+            <rect class="f-node start" x="500" y="20" width="200" height="40" rx="2"/>
+            <text class="f-text start-txt" x="600" y="45" text-anchor="middle">New workload in APAC jurisdiction</text>
           </g>
-          <path class="f-edge" d="M 560 56 L 560 90" marker-end="url(#arrow)"/>
+          <path class="f-edge" d="M 600 60 L 600 100" marker-end="url(#arrow)"/>
 
-          <!-- D1: Payment / systemically-important? -->
+          <!-- ========= D1 · Payment / systemically-important? ========= -->
           <g>
-            <rect class="f-node decision" x="380" y="90" width="360" height="70" rx="2"/>
-            <text class="f-text cap" x="560" y="112" text-anchor="middle">Decision 01</text>
-            <text class="f-text decision" x="560" y="136" text-anchor="middle">Is the workload a domestic payment rail,</text>
-            <text class="f-text decision" x="560" y="152" text-anchor="middle">switching, or systemically-important service?</text>
-          </g>
-
-          <!-- D1 -> D2 (No, left) -->
-          <path class="f-edge" d="M 380 125 L 220 125 L 220 200" marker-end="url(#arrow)"/>
-          <text class="f-edge-label no" x="300" y="118" text-anchor="middle">No</text>
-
-          <!-- D1 -> T-STRICT-1 branch (Yes, right) -->
-          <path class="f-edge" d="M 740 125 L 900 125 L 900 200" marker-end="url(#arrow)"/>
-          <text class="f-edge-label yes" x="820" y="118" text-anchor="middle">Yes</text>
-
-          <!-- T-STRICT-1 box -->
-          <g>
-            <rect class="f-node t-strict" x="740" y="200" width="320" height="110" rx="2"/>
-            <text class="f-text cap" x="900" y="224" text-anchor="middle">Terminal · STRICT</text>
-            <text class="f-text t-strict" x="900" y="248" text-anchor="middle">Onshore primary processing</text>
-            <text class="f-text" x="900" y="268" text-anchor="middle" style="font-size:11px;">Dedicated / single-tenant enclave</text>
-            <text class="f-text" x="900" y="284" text-anchor="middle" style="font-size:11px;">Onshore HSM · local DR</text>
-            <text class="f-text cap" x="900" y="302" text-anchor="middle" style="font-size:9px;">CN · IN · ID · (HK/TH payment rails)</text>
+            <rect class="f-node decision" x="400" y="100" width="400" height="70" rx="2"/>
+            <text class="f-text cap" x="600" y="120" text-anchor="middle">Decision 01</text>
+            <text class="f-text decision" x="600" y="142" text-anchor="middle">Is the workload a domestic payment rail,</text>
+            <text class="f-text decision" x="600" y="158" text-anchor="middle">switching, or systemically-important service?</text>
           </g>
 
-          <!-- D2: PII / customer data? -->
+          <!-- D1 → D2 (No, left) -->
+          <path class="f-edge" d="M 400 135 L 210 135 L 210 220" marker-end="url(#arrow)"/>
+          <text class="f-edge-label no" x="305" y="128" text-anchor="middle">No</text>
+
+          <!-- D1 → T-STRICT-1 (Yes, right) -->
+          <path class="f-edge" d="M 800 135 L 1020 135 L 1020 210" marker-end="url(#arrow)"/>
+          <text class="f-edge-label yes" x="910" y="128" text-anchor="middle">Yes</text>
+
+          <!-- ========= T-STRICT-1 (right column) ========= -->
           <g>
-            <rect class="f-node decision" x="60" y="200" width="320" height="70" rx="2"/>
-            <text class="f-text cap" x="220" y="222" text-anchor="middle">Decision 02</text>
-            <text class="f-text decision" x="220" y="246" text-anchor="middle">Does the workload process</text>
-            <text class="f-text decision" x="220" y="262" text-anchor="middle">customer PII or regulated records?</text>
+            <rect class="f-node t-strict" x="860" y="210" width="320" height="130" rx="2"/>
+            <text class="f-text cap" x="1020" y="234" text-anchor="middle">Terminal · STRICT</text>
+            <text class="f-text t-strict" x="1020" y="258" text-anchor="middle">Onshore primary processing</text>
+            <text class="f-text" x="1020" y="278" text-anchor="middle" style="font-size:11px;">Dedicated / single-tenant enclave</text>
+            <text class="f-text" x="1020" y="294" text-anchor="middle" style="font-size:11px;">Onshore HSM · local DR</text>
+            <text class="f-text cap" x="1020" y="318" text-anchor="middle" style="font-size:9px;">CN · IN · ID · (HK/TH payment rails)</text>
           </g>
 
-          <!-- D2 -> D3 (Yes) -->
-          <path class="f-edge" d="M 220 270 L 220 340" marker-end="url(#arrow)"/>
-          <text class="f-edge-label yes" x="250" y="310" text-anchor="start">Yes</text>
-
-          <!-- D2 -> T-LIGHT (No, to right) -->
-          <path class="f-edge" d="M 380 235 L 460 235 L 460 340" marker-end="url(#arrow)"/>
-          <text class="f-edge-label no" x="420" y="228" text-anchor="middle">No</text>
-
-          <!-- D3: Jurisdiction severity? -->
+          <!-- ========= D2 · PII / regulated records? ========= -->
           <g>
-            <rect class="f-node decision" x="60" y="340" width="320" height="70" rx="2"/>
-            <text class="f-text cap" x="220" y="362" text-anchor="middle">Decision 03</text>
-            <text class="f-text decision" x="220" y="386" text-anchor="middle">Is the jurisdiction in the</text>
-            <text class="f-text decision" x="220" y="402" text-anchor="middle"><tspan fill="#7C2D12">Strict</tspan> or <tspan fill="#B45309">Moderate</tspan> band?</text>
+            <rect class="f-node decision" x="40" y="220" width="340" height="70" rx="2"/>
+            <text class="f-text cap" x="210" y="240" text-anchor="middle">Decision 02</text>
+            <text class="f-text decision" x="210" y="262" text-anchor="middle">Does the workload process</text>
+            <text class="f-text decision" x="210" y="278" text-anchor="middle">customer PII or regulated records?</text>
           </g>
 
-          <!-- D3 -> T-STRICT-2 (Yes / Strict) -->
-          <path class="f-edge" d="M 60 375 L 20 375 L 20 480 L 100 480" marker-end="url(#arrow)"/>
-          <text class="f-edge-label yes" x="10" y="425" text-anchor="end">Strict</text>
+          <!-- D2 → D3 (Yes, down) -->
+          <path class="f-edge" d="M 210 290 L 210 360" marker-end="url(#arrow)"/>
+          <text class="f-edge-label yes" x="222" y="327" text-anchor="start">Yes</text>
 
-          <!-- D3 -> T-MOD (Moderate center) -->
-          <path class="f-edge" d="M 220 410 L 220 480" marker-end="url(#arrow)"/>
-          <text class="f-edge-label" x="235" y="450" text-anchor="start" style="fill:#B45309;">Mod.</text>
+          <!-- D2 → T-LIGHT (No, long horizontal to far-right terminal) -->
+          <path class="f-edge" d="M 380 255 L 420 255 L 420 410 L 1025 410 L 1025 500" marker-end="url(#arrow)"/>
+          <text class="f-edge-label no" x="430" y="248" text-anchor="start">No</text>
 
-          <!-- D3 -> D4 (Light/None, No) -->
-          <path class="f-edge" d="M 380 375 L 460 375 L 460 480" marker-end="url(#arrow)"/>
-          <text class="f-edge-label no" x="420" y="368" text-anchor="middle">Light / None</text>
+          <!-- ========= D3 · Jurisdiction severity? ========= -->
+          <g>
+            <rect class="f-node decision" x="40" y="360" width="340" height="70" rx="2"/>
+            <text class="f-text cap" x="210" y="380" text-anchor="middle">Decision 03</text>
+            <text class="f-text decision" x="210" y="402" text-anchor="middle">Is the jurisdiction in the</text>
+            <text class="f-text decision" x="210" y="418" text-anchor="middle"><tspan fill="#7C2D12">Strict</tspan> or <tspan fill="#B45309">Moderate</tspan> band?</text>
+          </g>
 
+          <!-- D3 → T-STRICT-2 (Strict, down-left) -->
+          <path class="f-edge" d="M 140 430 L 140 500" marker-end="url(#arrow)"/>
+          <text class="f-edge-label" x="150" y="467" text-anchor="start" style="fill:#7C2D12;">Strict</text>
+
+          <!-- D3 → T-MOD (Moderate, down-center) -->
+          <path class="f-edge" d="M 340 430 L 340 500" marker-end="url(#arrow)"/>
+          <text class="f-edge-label" x="350" y="467" text-anchor="start" style="fill:#B45309;">Moderate</text>
+
+          <!-- D3 → D4 (Light / None, right from right edge) -->
+          <path class="f-edge" d="M 380 395 L 670 395 L 670 500" marker-end="url(#arrow)"/>
+          <text class="f-edge-label no" x="525" y="388" text-anchor="middle">Light / None</text>
+
+          <!-- ========= Row 4 terminals (y 500–630) ========= -->
           <!-- T-STRICT-2 -->
           <g>
-            <rect class="f-node t-strict" x="40" y="480" width="200" height="110" rx="2"/>
-            <text class="f-text cap" x="140" y="504" text-anchor="middle">Terminal · STRICT</text>
-            <text class="f-text t-strict" x="140" y="528" text-anchor="middle">Onshore primary copy</text>
-            <text class="f-text" x="140" y="548" text-anchor="middle" style="font-size:11px;">Regulator-accessible</text>
-            <text class="f-text" x="140" y="564" text-anchor="middle" style="font-size:11px;">Cross-border mirror only</text>
-            <text class="f-text cap" x="140" y="582" text-anchor="middle" style="font-size:9px;">CN · IN</text>
+            <rect class="f-node t-strict" x="40" y="500" width="200" height="130" rx="2"/>
+            <text class="f-text cap" x="140" y="524" text-anchor="middle">Terminal · STRICT</text>
+            <text class="f-text t-strict" x="140" y="548" text-anchor="middle">Onshore primary copy</text>
+            <text class="f-text" x="140" y="568" text-anchor="middle" style="font-size:11px;">Regulator-accessible</text>
+            <text class="f-text" x="140" y="584" text-anchor="middle" style="font-size:11px;">Cross-border mirror only</text>
+            <text class="f-text cap" x="140" y="608" text-anchor="middle" style="font-size:9px;">CN · IN</text>
           </g>
 
           <!-- T-MOD -->
           <g>
-            <rect class="f-node t-moderate" x="260" y="480" width="180" height="110" rx="2"/>
-            <text class="f-text cap" x="350" y="504" text-anchor="middle">Terminal · MODERATE</text>
-            <text class="f-text t-moderate" x="350" y="528" text-anchor="middle">Onshore + mirror</text>
-            <text class="f-text" x="350" y="548" text-anchor="middle" style="font-size:11px;">Regulator notification</text>
-            <text class="f-text" x="350" y="564" text-anchor="middle" style="font-size:11px;">Approved cross-border</text>
-            <text class="f-text cap" x="350" y="582" text-anchor="middle" style="font-size:9px;">ID · MY · TW</text>
+            <rect class="f-node t-moderate" x="270" y="500" width="200" height="130" rx="2"/>
+            <text class="f-text cap" x="370" y="524" text-anchor="middle">Terminal · MODERATE</text>
+            <text class="f-text t-moderate" x="370" y="548" text-anchor="middle">Onshore + mirror</text>
+            <text class="f-text" x="370" y="568" text-anchor="middle" style="font-size:11px;">Regulator notification</text>
+            <text class="f-text" x="370" y="584" text-anchor="middle" style="font-size:11px;">Approved cross-border</text>
+            <text class="f-text cap" x="370" y="608" text-anchor="middle" style="font-size:9px;">ID · MY · TW</text>
           </g>
 
-          <!-- D4: Cross-border approval path? -->
+          <!-- D4 · Cross-border approval path? -->
           <g>
-            <rect class="f-node decision" x="380" y="480" width="280" height="70" rx="2"/>
-            <text class="f-text cap" x="520" y="502" text-anchor="middle">Decision 04</text>
-            <text class="f-text decision" x="520" y="526" text-anchor="middle">Adequacy / SCCs / consent</text>
-            <text class="f-text decision" x="520" y="542" text-anchor="middle">in place for outbound transfer?</text>
+            <rect class="f-node decision" x="500" y="500" width="340" height="70" rx="2"/>
+            <text class="f-text cap" x="670" y="520" text-anchor="middle">Decision 04</text>
+            <text class="f-text decision" x="670" y="542" text-anchor="middle">Adequacy / SCCs / consent</text>
+            <text class="f-text decision" x="670" y="558" text-anchor="middle">in place for outbound transfer?</text>
           </g>
 
-          <!-- D4 -> T-LIGHT (Yes) -->
-          <path class="f-edge" d="M 660 515 L 740 515" marker-end="url(#arrow)"/>
-          <text class="f-edge-label yes" x="700" y="508" text-anchor="middle">Yes</text>
-
-          <!-- D4 -> T-MOD-2 (No, to bottom) -->
-          <path class="f-edge" d="M 520 550 L 520 640" marker-end="url(#arrow)"/>
-          <text class="f-edge-label no" x="535" y="600" text-anchor="start">No</text>
-
-          <!-- T-LIGHT (cross-border OK) -->
+          <!-- T-LIGHT -->
           <g>
-            <rect class="f-node t-light" x="740" y="460" width="340" height="110" rx="2"/>
-            <text class="f-text cap" x="910" y="484" text-anchor="middle">Terminal · LIGHT</text>
-            <text class="f-text t-light" x="910" y="508" text-anchor="middle">Regional hub / offshore permitted</text>
-            <text class="f-text" x="910" y="528" text-anchor="middle" style="font-size:11px;">Multi-tenant with controls</text>
-            <text class="f-text" x="910" y="544" text-anchor="middle" style="font-size:11px;">Privacy notice + safeguards</text>
-            <text class="f-text cap" x="910" y="562" text-anchor="middle" style="font-size:9px;">SG · JP · HK · AU · TH</text>
+            <rect class="f-node t-light" x="870" y="500" width="310" height="130" rx="2"/>
+            <text class="f-text cap" x="1025" y="524" text-anchor="middle">Terminal · LIGHT</text>
+            <text class="f-text t-light" x="1025" y="548" text-anchor="middle">Regional hub / offshore permitted</text>
+            <text class="f-text" x="1025" y="568" text-anchor="middle" style="font-size:11px;">Multi-tenant with controls</text>
+            <text class="f-text" x="1025" y="584" text-anchor="middle" style="font-size:11px;">Privacy notice + safeguards</text>
+            <text class="f-text cap" x="1025" y="608" text-anchor="middle" style="font-size:9px;">SG · JP · HK · AU · TH</text>
           </g>
 
-          <!-- T-MOD-2 (forced onshore due to no transfer basis) -->
+          <!-- D4 → T-LIGHT (Yes, right) -->
+          <path class="f-edge" d="M 840 535 L 870 535" marker-end="url(#arrow)"/>
+          <text class="f-edge-label yes" x="855" y="525" text-anchor="middle">Yes</text>
+
+          <!-- D4 → T-MOD-2 (No, down) -->
+          <path class="f-edge" d="M 670 570 L 670 660" marker-end="url(#arrow)"/>
+          <text class="f-edge-label no" x="682" y="618" text-anchor="start">No</text>
+
+          <!-- ========= T-MOD-2 (below D4) ========= -->
           <g>
-            <rect class="f-node t-moderate" x="380" y="640" width="280" height="100" rx="2"/>
-            <text class="f-text cap" x="520" y="664" text-anchor="middle">Terminal · MODERATE</text>
-            <text class="f-text t-moderate" x="520" y="688" text-anchor="middle">Retain onshore until</text>
-            <text class="f-text t-moderate" x="520" y="704" text-anchor="middle">transfer basis established</text>
-            <text class="f-text" x="520" y="722" text-anchor="middle" style="font-size:11px;">Execute SCC / consent workflow</text>
+            <rect class="f-node t-moderate" x="500" y="660" width="340" height="130" rx="2"/>
+            <text class="f-text cap" x="670" y="684" text-anchor="middle">Terminal · MODERATE</text>
+            <text class="f-text t-moderate" x="670" y="708" text-anchor="middle">Retain onshore until</text>
+            <text class="f-text t-moderate" x="670" y="724" text-anchor="middle">transfer basis established</text>
+            <text class="f-text" x="670" y="744" text-anchor="middle" style="font-size:11px;">Execute SCC / consent workflow</text>
+            <text class="f-text cap" x="670" y="766" text-anchor="middle" style="font-size:9px;">pending adequacy decision</text>
           </g>
 
-          <!-- D5: Workload isolation expectation? -->
-          <!-- This runs parallel: apply workload-isolation layer regardless of path -->
+          <!-- ========= Overlay (advisory, applies to every terminal above) ========= -->
           <g>
-            <rect class="f-node" x="40" y="640" width="320" height="100" rx="2"/>
-            <text class="f-text cap" x="200" y="664" text-anchor="middle">Overlay · Workload Isolation</text>
-            <text class="f-text" x="200" y="688" text-anchor="middle">Apply segregation floor:</text>
-            <text class="f-text" x="200" y="706" text-anchor="middle" style="font-size:11px;">• Multi-tenant OK with controls</text>
-            <text class="f-text" x="200" y="722" text-anchor="middle" style="font-size:11px;">• Single-tenant for payment / keys</text>
+            <rect class="f-node" x="40" y="820" width="1120" height="60" rx="2" stroke-dasharray="4 4"/>
+            <text class="f-text cap" x="600" y="842" text-anchor="middle">Overlay · Workload Isolation — applies to all terminals above</text>
+            <text class="f-text" x="600" y="862" text-anchor="middle" style="font-size:11px;">Multi-tenant OK with controls &middot; Single-tenant enclave required for payment-rail and key-management workloads</text>
           </g>
-
-          <!-- Final sync arrow -->
-          <path class="f-edge" d="M 140 590 L 140 620 L 200 620 L 200 640" marker-end="url(#arrow)" stroke-dasharray="4 4"/>
-          <path class="f-edge" d="M 350 590 L 350 620 L 200 620" marker-end="url(#arrow)" stroke-dasharray="4 4" style="marker-end:none;"/>
-
-          <!-- END node -->
-          <g>
-            <rect class="f-node end" x="420" y="760" width="280" height="46" rx="2"/>
-            <text class="f-text end-txt" x="560" y="788" text-anchor="middle">Compose deployment topology</text>
-          </g>
-          <path class="f-edge" d="M 200 740 L 200 775 L 420 775" marker-end="url(#arrow)"/>
-          <path class="f-edge" d="M 520 740 L 520 760" marker-end="url(#arrow)"/>
-          <path class="f-edge" d="M 910 570 L 910 775 L 700 775" marker-end="url(#arrow)"/>
-          <path class="f-edge" d="M 140 590 L 140 775 L 420 775" marker-end="url(#arrow)"/>
         </svg>
       </div>
       <div class="flow-legend">
